@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>常见问题 - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div><button class="sidebar-toggle" id="sidebarClose">&times;</button></div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+<button class="menu-btn" id="menuBtn">☰</button>
+<main class="main-content">
+  <section class="section section-dark">
+    <div class="section-inner">
+      <h2 class="section-title"><span class="section-num">06</span>常见问题 FAQ</h2>
+      <div class="faq-list">
+        <details class="faq-item"><summary>规则修改后不生效怎么办？</summary><p>规则只在会话开始时加载。修改规则后，需要<strong>新建一个对话会话</strong>才能生效，当前会话不会自动刷新。</p></details>
+        <details class="faq-item"><summary>Memory 记忆功能如何管理？</summary><p>在对话中说 "请记住…"、"删除…的记忆"、"更新记忆…" 即可。Memory 是全局的，在所有项目和对话中生效。建议保持 10-20 个以内。</p></details>
+        <details class="faq-item"><summary>MCP 安装失败怎么排查？</summary><p>① 检查网络连接 ② 确认 command 路径正确（如 npx、python 是否在 PATH 中）③ 查看 MCP 状态指示灯，红色表示失败 ④ 尝试在终端手动运行 command 检查报错信息</p></details>
+        <details class="faq-item"><summary>三种模式如何选择？</summary><p><strong>Ask</strong>：纯问答不改代码 → <strong>Craft</strong>：单文件/小范围修改 → <strong>Plan</strong>：跨文件复杂任务。日常最常用 Craft，复杂需求用 Plan。</p></details>
+        <details class="faq-item"><summary>代码补全不工作？</summary><p>① 确认已登录腾讯云账号 ② 检查网络连接 ③ 确认设置中代码补全功能已开启 ④ 尝试 <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd> 手动触发</p></details>
+        <details class="faq-item"><summary>Rules 和 Memory 有什么区别？</summary><p><strong>Rules</strong> 是手动创建的行为规范（如"代码必须加注释"），需要配置文件；<strong>Memory</strong> 是 AI 自动记住的偏好和事实（如"我喜欢用 TypeScript"），通过对话创建。Rules 适合团队规范，Memory 适合个人偏好。</p></details>
+      </div>
+      <div class="page-nav">
+        <a href="examples.html" class="page-nav-btn prev">← 上一章：实战案例</a>
+        <a href="resources.html" class="page-nav-btn next">下一章：参考资源 →</a>
+      </div>
+    </div>
+  </section>
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+<script src="../assets/script.js"></script>
+</body>
+</html>

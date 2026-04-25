@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配置 Rules - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div>
+    <button class="sidebar-toggle" id="sidebarClose">&times;</button>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+  <section class="section">
+    <div class="section-inner">
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">3.5</span>
+          <h3>配置 Rules <span class="time-badge">2-3 分钟</span></h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>什么是 Rules？</h4>
+          <p>Rules（规则）为 AI 提供<strong>系统级指令和上下文信息</strong>，将编码规范、工作流程等打包在一起。当规则被应用时，其内容会被自动加入到发送给模型的上下文开头，确保 AI 遵循一致的指导原则。</p>
+        </div>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ 注意：</strong>规则只会添加到每个会话的开始部分，创建或修改规则后需要<strong>新建对话会话</strong>才能生效。
+        </div>
+
+        <h4 class="subsection-title">规则层级</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>层级</span><span>存储位置</span><span>作用范围</span>
+          </div>
+          <div class="config-row">
+            <span><strong>项目规则</strong></span><span><code>.codebuddy/rules</code></span><span>当前项目 ✅ 可团队共享</span>
+          </div>
+          <div class="config-row">
+            <span><strong>用户规则</strong></span><span>用户目录</span><span>全局跨项目 ❌ 不纳入版本控制</span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">三种规则类型</h4>
+        <div class="rules-types">
+          <div class="rule-type-card">
+            <div class="rule-type-badge always">Always</div>
+            <h5>总是生效</h5>
+            <p>应用于每个聊天会话，始终加载规则原文</p>
+            <div class="rule-type-use">适合：核心编码规范、架构约束、安全要求</div>
+          </div>
+          <div class="rule-type-card">
+            <div class="rule-type-badge requested">Agent Requested</div>
+            <h5>智能体请求</h5>
+            <p>Agent 根据描述判断相关性后自动应用</p>
+            <div class="rule-type-use">适合：文档、使用指南、参考资料</div>
+          </div>
+          <div class="rule-type-card">
+            <div class="rule-type-badge manual">Manual</div>
+            <h5>手动触发</h5>
+            <p>对话中通过 <code>@规则名</code> 提及时应用</p>
+            <div class="rule-type-use">适合：特定功能指南、可选最佳实践</div>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">创建项目规则步骤</h4>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-content"><p>打开 CodeBuddy IDE 设置页</p></div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-content"><p>在对话框顶部找到规则 按钮</p></div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-content"><p>点击创建规则 → 选择 项目规则</p></div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-content"><p>填写规则名称、类型和内容</p></div></div>
+        </div>
+
+        <div class="screenshot-wrapper" style="margin-top: 16px;">
+          <img src="../images/check-rule.png" alt="CodeBuddy 创建项目规则" class="screenshot">
+          <div class="screenshot-caption">在 CodeBuddy 设置中创建和管理项目规则</div>
+        </div>
+
+        <h4 class="subsection-title">完整规则示例</h4>
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="rule-code">JAVA编码规范</button>
+            <button class="tab-btn" data-tab="rule-arch">架构约束</button>
+            <button class="tab-btn" data-tab="rule-karpathy">karpathy-guidelines</button>
+          </div>
+          <div class="tab-content active" id="rule-code">
+            <div class="code-block markdown-body" data-markdown>
+
+# 文件：.codebuddy/rules/java-coding-style.mdc
+
+```yaml
+---
+description:Java开发编程规范 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-04-25T08:30:48.784Z
+provider: 
+---
+```
+
+你是一个专业的Java开发助手，所有代码必须严格遵循以下编码规范。
+
+**注意：如果没有明确说明，需要遵循Google Java Style Guide。**
+
+## 代码规范等级定义
+- **可选（Optional）**：可以参考，根据具体情况决定是否采用
+- **推荐（Preferable）**：代码应当遵循，但在特殊情况下可以例外
+- **必须（Mandatory）**：代码必须遵循
+
+注：未明确指明的则默认为必须（Mandatory）
+
+## 编程规范原则
+- 遵循正确性、可读性、可维护性、可调试性、一致性、美观原则
+- 永远不要对代码进行格式化操作，只完成修改代码的任务
+- 对不在当前变更范围内的代码，尽量不要进行格式化
+
+## 源文件规范
+
+### 【必须】基础规范
+- 源文件以其最顶层的类名命名，大小写敏感，文件扩展名为.java
+- 源文件编码格式必须为UTF-8
+- 单个源文件最大长度2000行（自动生成代码除外）
+- 除换行符外，空格是源文件中唯一允许的空白字符
+- 不允许行前使用tab缩进，必须使用4个空格缩进
+- 对于特殊转义字符(\b, \t, \n, \f, \r, ", ', \)，不允许使用八进制或Unicode转义
+- 每个顶级类都在一个与它同名的源文件中
+- 清理无用的方法、变量、类、配置文件，避免造成过多垃圾
+
+### 【必须】文件结构
+- 源文件按顺序包含：许可证或版权信息、package语句、import语句、类和接口声明
+- 各部分之间用一个空行隔开
+- package语句不换行
+- import不使用通配符(import java.util.*是错误的)
+- 每个import语句独立成行
+- 重载方法不应该分开，应该按顺序出现在一起
+
+### 【推荐】import语句顺序
+import语句分为两组，按以下顺序：
+1. 所有静态导入独立成组
+2. 非静态导入：
+   - 第三方的包，字典序（如：com, junit, org, sun）
+   - java imports
+   - javax imports
+按静态导入和非静态导入分为两组，每组内不空行，组内按字典序排列
+
+### 【推荐】类成员顺序
+- 静态成员变量
+- 非静态成员变量  
+- 构造函数
+- 方法(公有方法或保护方法 > 私有方法 > getter/setter方法)
+
+## 格式规范
+
+### 【必须】大括号规范
+- 所有可以使用大括号的地方都要加上大括号，即使只有一条语句
+- 遵循K&R风格：左大括号前不换行，左大括号后换行，右大括号前换行
+- 空块可以简洁写成{}，但多块语句中的空块右大括号也要换行
+
+### 【必须】缩进与行长度
+- 每当开始新块，缩进增加4个空格（不能使用\t字符）
+- 每个语句后要换行，不能多个语句写在同一行
+- 单行字符数限制不超过120个
+- 长行断行时第二行相对第一行缩进8个空格
+- 运算符与下文一起换行
+- 方法调用的点符号与下文一起换行
+- 方法调用时多个参数需要换行时，在逗号后进行
+- 在括号前不要换行
+
+### 【必须】空白规范
+- 类中连续成员之间使用空行分隔
+- 函数体内语句的逻辑分组间使用空行
+- 保留字与左括号间加空格(if、for、catch等)
+- 保留字与前面右大括号间加空格(else、catch)
+- 左大括号前加空格，三个例外：
+  - @SomeAnnotation({a, b})（不使用空格）
+  - String[][] x = {{"foo"}};（大括号间没有空格）
+  - new int[]{};（}{间没有空格）
+- 二元或三元运算符两侧加空格
+- 泛型中的&，如：<T extends Foo & Bar>
+- catch中的|，如catch (FooException | BarException e)
+- foreach中的冒号
+- lambda表达式中的箭头: (String str) -> str.length()
+- 在逗号、冒号、分号及强制转换的右括号后加空格
+- 语句后注释的双斜杠两边都要空格
+- 类型和变量之间：List<String> list
+- 数组初始化中，大括号内的空格是可选的
+
+### 【可选】水平对齐
+水平对齐可增加代码可读性，但会为日后维护带来问题。没有必要增加若干空格来使某一行的字符与上一行对应位置的字符对齐。
+
+### 【必须】字面量规范
+- long常量必须使用大写字母L后缀，不能用小写l
+- 十六进制必须使用大写字母A-F
+- 其他数字前缀、中缀和后缀均使用小写字母
+
+### 【必须】特殊结构规范
+- 枚举常量间用逗号隔开，简单枚举可写成数组初始化格式
+- 每次只声明一个变量，不使用组合声明(for循环例外)
+- 变量需要时才声明，并尽快初始化
+- 数组声明中括号是类型的一部分：String[] args而非String args[]
+- switch块内容缩进4个空格，每个语句组通过break等终止或用注释说明fall through
+- 每个switch语句都包含default语句组
+
+### 【必须】注解规范
+- 注解独占一行，应用于类、方法和构造函数
+- 单个注解可与方法签名同行
+- 应用于字段的多个注解允许与字段同行
+
+### 【必须】Lambda表达式规范
+- 对于函数式接口必须使用Lambda表达式而不是匿名类
+- 通常方法引用应比lambda表达式更可取
+- 除非提高可读性，否则省略参数类型
+- 如果lambda表达式超过几行，考虑创建方法
+- 函数式接口必须加上@FunctionalInterface注解
+- 推荐使用JDK自带的Function/Consumer/Supplier/Predicate等函数式接口
+- 方法入参不能是Optional类型
+- 函数作为入参的方法不要重载，建议用不同方法名区分
+- 不在Lambda中改变外部变量或状态，应该让Lambda返回计算结果
+- 对于Stream操作，推荐一个操作一行代码以提高可读性和可调试性
+- 耗时操作禁止使用parallel stream
+- 禁止parallel stream对外部非线程安全集合写操作
+
+### 【必须】注释规范
+- 注释与代码在同一缩进级别
+- 多行注释后续行必须从*开始并与前一行*对齐
+- 注释应说明设计思路而不是描述代码行为
+- 注释应能使代码更加明确
+- 避免注释部分的过度修饰
+- 保持注释部分简单、明确
+
+## 命名规范
+
+### 【必须】基础命名规则
+- 命名只允许字母、数字、下划线和美元符号
+- 不能以下划线或美元符号开始或结束
+- 使用设计模式时在命名中体现具体模式
+
+### 【必须】各类型命名规范
+- 包名：全部小写，连续单词简单连接，不使用下划线
+- 类名：UpperCamelCase风格，通常是名词或名词短语
+- 测试类：以被测试类名开始，以Test结尾
+- 异常类：以Exception结尾
+- 方法名：lowerCamelCase风格，通常是动词或动词短语
+- 常量名：CONSTANT_CASE，全部大写，下划线分隔单词
+- 非常量成员变量：lowerCamelCase风格，通常是名词或名词短语
+- 参数名：lowerCamelCase风格，避免单个字符命名
+- 局部变量名：lowerCamelCase风格，除临时变量和循环变量外不允许单字符命名
+
+### 【推荐】领域模型命名
+- 数据对象：xxxDO，xxx即为数据表名
+- 数据传输对象：xxxDTO，xxx为业务领域相关的名称
+- 展示对象：xxxVO，xxx一般为网页名称
+- POJO是DO/DTO/BO/VO的统称，禁止命名成xxxPOJO
+
+### 【推荐】类名补充规范
+- 如果实现接口则建议加上Impl的后缀与接口区别
+- 抽象类推荐命名使用Abstract或Base开头
+
+## 异常处理规范
+
+### 【必须】异常规约
+- 不在finally块中使用return
+- 异常不用来做流程控制、条件控制
+- 异常信息应包括案发现场信息和异常堆栈信息
+- 不处理的异常通过throws往上抛出
+
+### 【推荐】异常捕获
+- 可预检查的RuntimeException不用catch处理，应预检查
+- 区分稳定代码和非稳定代码，针对性处理异常
+- finally块必须关闭资源对象、流对象
+- 捕获异常是为了处理，不要捕获后什么都不做
+- 最外层业务使用者必须处理异常
+
+## 编程实践规范
+
+### 【必须】基础实践
+- 正则表达式需预编译，不在方法体内定义Pattern
+- 需要Map主键和取值时迭代entrySet()而不是keySet()
+- 使用Collection.isEmpty()检测空而不是size() == 0
+- 循环中字符串拼接使用StringBuilder
+- 拼接单个字符使用char而非String
+- 不使用魔法值，-1、0、1除外
+- 优先使用try-with-resources语句
+- 公有静态常量通过类访问而不是实例访问
+- 禁止使用BigDecimal(double)构造方法
+- 返回空数组和空集合而不是null
+- 优先使用常量或确定值调用equals方法
+- 包装类对象值比较全部使用equals方法
+- 注意Map集合K/V能否存储null值（HashMap允许null，ConcurrentHashMap不允许）
+- Arrays.asList()或List.of转化后不可修改
+- foreach中不可remove或add元素，使用Iterator
+- 使用diamond operator简化声明
+
+### 【推荐】日志规约
+- 使用SLF4J日志框架API而不是直接使用Log4j、Logback
+- 生产环境禁止输出debug日志
+- 谨慎记录日志，思考日志的实际价值
+
+### 【推荐】其他实践
+- 尽量避免使用finalize方法
+- 用小括号限定运算符优先级组
+- 使用泛型时可用单个大写字母加数字
+
+### 【可选】JavaDoc规范
+- 除第一个段落外，每个段落第一个单词前都有标签<p>
+- 标准的Javadoc标记按以下顺序出现：@param，@return，@throws，@deprecated
+- 对于简单明显的方法如getFoo，Javadoc是可选的
+- 如果方法重载了超类中的方法，Javadoc也是并非必需的
+
+## 修饰符顺序
+按Java语言规范推荐顺序：
+public protected private abstract static final transient volatile synchronized native strictfp
+
+## 特别注意
+- 永远不要对代码进行不必要的格式化操作
+- 重要规则优先级：【必须】> 【推荐】> 【可选】
+- 代码评审时重点关注【必须】级别的规范遵循情况
+- 遵守"30秒规则"，提高代码的可读性
+- 书写较短的代码行
+- 为代码写注释文档
+- 将代码从逻辑上分段
+- 合理使用空行
+- 如需对已有代码进行格式化，建议放置在单独版本中处理
+
+## 重要提醒
+在编写代码时，请始终牢记：编码规范的目的是提高代码的正确性、可读性、可维护性、可调试性、一致性和美观性。当遇到特殊情况时，应该优先考虑这些原则，而不是盲目遵循规则。
+            </div>
+          </div>
+          <div class="tab-content" id="rule-arch">
+            <div class="code-block markdown-body" data-markdown>
+```yaml
+---
+description: 项目架构约束 - 分层架构
+alwaysApply: true
+enabled: true
+---
+
+
+# 架构约束
+
+## 目录结构
+src/
+├── controllers/   # 路由处理，仅做参数校验和响应格式化
+├── services/      # 业务逻辑层，核心业务规则
+├── repositories/  # 数据访问层，封装数据库操作
+├── models/        # 数据模型定义
+├── middlewares/   # 中间件（认证、日志、限流）
+└── utils/         # 纯工具函数，无业务逻辑
+
+## 依赖规则
+- Controller → Service → Repository（单向依赖）
+- 禁止 Controller 直接调用 Repository
+- 禁止 Service 之间循环依赖
+- Utils 不依赖任何业务模块
+```
+            </div>
+          </div>
+                    <div class="tab-content" id="rule-karpathy">
+            <div class="code-block markdown-body" data-markdown>
+```yaml
+---
+description: 
+alwaysApply: true
+enabled: true
+updatedAt: 2026-04-18T07:50:06.700Z
+provider: 
+---
+```
+
+1. 编码前先思考 (Think Before Coding)
+不要假设，不要隐藏困惑，要权衡利弊。
+在实现之前：
+明确表达假设： 清楚地陈述你的前提。
+不确定就问： 如果有疑问，立即询问。
+展示多种方案： 如果存在多种解读，请全部列出，不要私自做决定。
+提倡简化： 如果有更简单的方案，请提出来。
+必要时回绝： 如果要求不合理，请予以回绝。
+停止并说明： 如果某处不清晰，请停止编码，指出困惑点并询问。
+
+2. 简约至上 (Simplicity First)
+用最少的代码解决问题。
+拒绝投机： 不写推测性的代码，不添加需求之外的功能。
+拒绝过度设计： 不为仅使用一次的代码做抽象；不添加未经要求的“灵活性”或“可配置性”。
+拒绝处理不可能的场景： 不为不会发生的场景编写错误处理逻辑。
+精简代码： 如果 50 行就能搞定却写了 200 行，请重写。
+自我审视： 问自己：“资深工程师会觉得这太复杂了吗？” 如果是，请简化。
+
+3. 精准改动 (Surgical Changes)
+只动必须动的地方。只清理你产生的“垃圾”。
+在修改现有代码时：
+保持边界： 不要试图“改进”周边的代码、注释或格式。
+不修不坏： 不要重构没有问题的代码。
+风格对齐： 即使你有更好的习惯，也要匹配现有的代码风格。
+仅做提醒： 发现无关的死代码时，提出来，但不要直接删除。
+清理关联： 仅移除由于你的改动而产生的无用引用（imports）、变量或函数。
+测试标准： 每一行改动都应能直接追溯到用户的需求。
+
+4. 目标驱动执行 (Goal-Driven Execution)
+定义成功标准，循环执行直至验证通过。
+将任务转化为可验证的目标：
+“增加校验” → “为非法输入编写测试，然后使其通过”。
+“修复 Bug” → “编写能复现问题的测试，然后使其通过”。
+“重构 X” → “确保重构前后的测试都能通过”。
+对于多步骤任务，简要陈述计划：
+[步骤] → 验证：[检查项]
+[步骤] → 验证：[检查项]
+
+            </div>
+          </div>
+
+        </div>
+
+        <h4 class="subsection-title">CODEBUDDY.md — 轻量替代方案</h4>
+        <div class="card">
+          <p>如果不想使用完整的规则系统，可以在<strong>项目根目录</strong>放置 <code>CODEBUDDY.md</code> 文件：</p>
+          <ul>
+            <li>纯 Markdown，无需 YAML 元数据</li>
+            <li>默认全文加入上下文</li>
+            <li>如果根目录存在 <code>AGENTS.md</code> 而不存在 <code>CODEBUDDY.md</code>，会自动加载 <code>AGENTS.md</code></li>
+          </ul>
+        </div>
+
+        <h4 class="subsection-title">最佳实践</h4>
+        <div class="best-practices">
+          <div class="bp-item"><span class="bp-icon">📏</span><div><strong>控制规模</strong><p>单条规则控制在 500 行以内</p></div></div>
+          <div class="bp-item"><span class="bp-icon">🧩</span><div><strong>拆分组合</strong><p>大规则拆分为多个可组合的小规则</p></div></div>
+          <div class="bp-item"><span class="bp-icon">📝</span><div><strong>提供示例</strong><p>给出具体示例或参考文件路径</p></div></div>
+          <div class="bp-item"><span class="bp-icon">🎯</span><div><strong>合理分配</strong><p>核心规范设为 always（3-5 个），其他设为 manual 或 requested</p></div></div>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="mcp.html" class="page-nav-btn prev">← 上一章：配置 MCP</a>
+        <a href="coding.html" class="page-nav-btn next">下一章：开始 Coding →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

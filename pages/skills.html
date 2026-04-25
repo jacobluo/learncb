@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配置 Skills - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div>
+    <button class="sidebar-toggle" id="sidebarClose">&times;</button>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+  <section class="section section-dark">
+    <div class="section-inner">
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">3.2</span>
+          <h3>配置 Skills <span class="time-badge">2-3 分钟</span></h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>什么是 Skills？</h4>
+          <p>Skills（技能）是封装好的<strong>专业指令集</strong>，可以让 AI 在特定领域表现更出色。例如：安全审计、性能压测、代码审查、前端开发等。当你在对话中触发 Skill 时，其内容会被注入到 AI 的上下文中，引导 AI 按照专业流程执行任务。</p>
+        </div>
+
+        <h4 class="subsection-title">获取方式一览</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>方式</span><span>说明</span><span>适用场景</span>
+          </div>
+          <div class="config-row">
+            <span><strong>插件市场</strong> ⭐</span>
+            <span><code>/plugin</code> → 搜索一键安装</span>
+            <span>最快上手，社区最佳实践 Skill 包</span>
+          </div>
+          <div class="config-row">
+            <span><strong>GitHub 安装</strong></span>
+            <span>从 GitHub 克隆到 <code>.codebuddy/</code></span>
+            <span>离线环境或需要版本控制</span>
+          </div>
+          <div class="config-row">
+            <span><strong>npm 安装</strong></span>
+            <span><code>npm install -g</code> 安装开发框架</span>
+            <span>规范驱动开发等独立 CLI 工具</span>
+          </div>
+          <div class="config-row">
+            <span><strong>手动创建</strong></span>
+            <span>在 <code>.codebuddy/skills/</code> 下自建 SKILL.md</span>
+            <span>定制团队规范、专属业务流程</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 方式一：插件市场 ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">方式一</span>
+          <h3>插件市场一键安装 <span class="time-badge">推荐</span></h3>
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>打开插件市场</strong>
+              <p>在 CodeBuddy 对话框中输入 <code>/plugin</code>，或点击右上方 <strong>设置 ⚙️</strong> → 切换到 <strong>插件</strong> 标签页。</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>搜索并安装</strong>
+              <p>在插件市场搜索框中输入关键词（如 <code>superpowers</code>），找到目标插件后点击安装。</p>
+              <div class="screenshot-wrapper" style="margin-top: 16px;">
+                <img src="../images/install-skill-superpowers.png" alt="CodeBuddy 插件市场 — 搜索 superpowers" class="screenshot">
+                <div class="screenshot-caption">CodeBuddy 插件市场：搜索 superpowers 并安装</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>验证安装</strong>
+              <p>安装完成后，验证 Skill 是否生效：</p>
+              <div class="config-table" style="margin-top:12px;">
+                <div class="config-row config-header">
+                  <span>环境</span><span>操作</span><span>说明</span>
+                </div>
+                <div class="config-row">
+                  <span><strong>CodeBuddy CLI</strong></span>
+                  <span>输入 <code>/skills</code></span>
+                  <span>查看所有已安装的技能列表</span>
+                </div>
+                <div class="config-row">
+                  <span><strong>CodeBuddy IDE</strong></span>
+                  <span>输入 <code>/</code> 后搜索技能名</span>
+                  <span>如输入 <code>/br</code> 可看到 brainstorming 技能</span>
+                </div>
+              </div>
+              <div class="screenshot-wrapper" style="margin-top: 16px;">
+                <img src="../images/check-skill-superpowers.png" alt="CodeBuddy IDE 中输入 /br 查看 brainstorming 技能" class="screenshot">
+                <div class="screenshot-caption">在 IDE 中输入 /br 即可看到 superpowers 的 brainstorming 技能</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Superpowers 介绍 -->
+        <h4 class="subsection-title">推荐插件：Superpowers — 工程方法论技能包</h4>
+        <div class="card">
+          <p><a href="https://github.com/obra/superpowers" target="_blank"><strong>Superpowers</strong></a> 是社区最热门的 Skill 包之一，提供一整套<strong>软件工程方法论技能</strong>，覆盖从需求分析到代码审查的完整开发周期。支持 Claude Code、CodeBuddy、OpenCode 等多种 AI 编程工具。</p>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Superpowers 包含的核心技能</h4>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h4>brainstorming</h4>
+            <p>创意探索与需求澄清，任何创造性工作之前的头脑风暴</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📝</div>
+            <h4>writing-plans</h4>
+            <p>将需求拆解为结构化的实施计划，明确步骤与依赖</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧪</div>
+            <h4>test-driven-dev</h4>
+            <p>TDD 方法论，先写测试再写实现代码</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔍</div>
+            <h4>systematic-debugging</h4>
+            <p>遇到 Bug 先系统分析，而不是盲目修改</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📋</div>
+            <h4>code-review</h4>
+            <p>完成功能后的代码审查，确保质量达标</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✅</div>
+            <h4>verification</h4>
+            <p>声明完成之前必须运行验证，用证据说话</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========== 方式二：GitHub 手动安装 ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">方式二</span>
+          <h3>从 GitHub 手动安装</h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>以 Anthropic 官方 Skills 仓库为例</h4>
+          <p><a href="https://github.com/anthropics/skills" target="_blank"><strong>anthropics/skills</strong></a> 是 Anthropic 官方发布的 Agent Skills 仓库（⭐ 124k），包含创意设计、开发技术、企业沟通、文档处理等多类技能，可直接克隆到本地使用。</p>
+        </div>
+
+        <h4 class="subsection-title">安装步骤</h4>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ 注意：</strong>不要直接 <code>git clone</code> 整个仓库到 skills 目录 — 仓库包含 README、spec、template 等无关文件，且 skill 嵌套在 <code>skills/</code> 子目录下，层级会不对。应只拷贝需要的 skill 文件夹。
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>克隆仓库到临时目录</strong>
+              <div class="code-block code-block-sm">
+<pre>
+<span class="code-string">git clone https://github.com/anthropics/skills /tmp/anthropic-skills</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>拷贝需要的 skill 到目标目录</strong>
+              <div class="code-block code-block-sm">
+<pre>
+<span class="code-comment"># 全局安装（所有项目生效）— 拷贝单个 skill</span>
+<span class="code-string">cp -r /tmp/anthropic-skills/skills/pdf ~/.codebuddy/skills/pdf</span>
+
+<span class="code-comment"># 或批量拷贝所有 skill</span>
+<span class="code-string">cp -r /tmp/anthropic-skills/skills/* ~/.codebuddy/skills/</span>
+
+<span class="code-comment"># 项目级安装（仅当前项目）</span>
+<span class="code-string">cp -r /tmp/anthropic-skills/skills/pdf .codebuddy/skills/pdf</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>清理临时目录</strong>
+              <div class="code-block code-block-sm">
+<pre>
+<span class="code-string">rm -rf /tmp/anthropic-skills</span>
+</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">仓库结构一览（17 个 Skills）</h4>
+        <div class="code-block">
+<pre>
+<span class="code-comment"># anthropics/skills 仓库完整目录</span>
+anthropics/skills/
+├── skills/
+│   ├── <span class="code-string">algorithmic-art/</span>        <span class="code-comment"># 🎨 算法艺术生成</span>
+│   ├── <span class="code-string">brand-guidelines/</span>       <span class="code-comment"># 📐 品牌规范指南</span>
+│   ├── <span class="code-string">canvas-design/</span>          <span class="code-comment"># 🖼️ 画布视觉设计</span>
+│   ├── <span class="code-string">claude-api/</span>             <span class="code-comment"># 🔌 Claude API 使用</span>
+│   ├── <span class="code-string">doc-coauthoring/</span>        <span class="code-comment"># ✍️ 文档协同编写</span>
+│   ├── <span class="code-string">docx/</span>                   <span class="code-comment"># 📝 Word 文档处理</span>
+│   ├── <span class="code-string">frontend-design/</span>        <span class="code-comment"># 🌐 前端界面设计（推荐）</span>
+│   ├── <span class="code-string">internal-comms/</span>         <span class="code-comment"># 💬 内部通讯撰写</span>
+│   ├── <span class="code-string">mcp-builder/</span>            <span class="code-comment"># 🛠️ MCP Server 生成器</span>
+│   ├── <span class="code-string">pdf/</span>                    <span class="code-comment"># 📄 PDF 文档处理</span>
+│   ├── <span class="code-string">pptx/</span>                   <span class="code-comment"># 📊 PPT 演示文稿</span>
+│   ├── <span class="code-string">skill-creator/</span>          <span class="code-comment"># 🧩 技能创建器（元技能）</span>
+│   ├── <span class="code-string">slack-gif-creator/</span>      <span class="code-comment"># 🎞️ Slack GIF 创建</span>
+│   ├── <span class="code-string">theme-factory/</span>          <span class="code-comment"># 🎨 主题样式工厂</span>
+│   ├── <span class="code-string">web-artifacts-builder/</span>  <span class="code-comment"># 📦 Web 组件构建器</span>
+│   ├── <span class="code-string">webapp-testing/</span>         <span class="code-comment"># 🧪 Web 应用测试</span>
+│   └── <span class="code-string">xlsx/</span>                   <span class="code-comment"># 📈 Excel 电子表格</span>
+├── spec/                       <span class="code-comment"># Agent Skills 规范定义</span>
+├── template/                   <span class="code-comment"># 自定义技能模板</span>
+└── README.md
+</pre>
+        </div>
+
+        <h4 class="subsection-title">使用示例：frontend-design</h4>
+        <div class="card">
+          <p><strong>frontend-design</strong> 是最常用的技能之一，安装后 AI 会自动生成高质量、有设计感的前端界面，避免千篇一律的"AI 风"。</p>
+        </div>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>只拷贝 frontend-design 这一个 skill</strong>
+              <div class="code-block code-block-sm">
+<pre>
+<span class="code-string">cp -r /tmp/anthropic-skills/skills/frontend-design ~/.codebuddy/skills/</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>在对话中触发</strong>
+            </div>
+          </div>
+        </div>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/frontend-design 帮我创建一个深色主题的产品落地页，包含 Hero、特性介绍和定价模块</div>
+          <div class="chat-bubble ai">我来为你设计一个高质量的深色主题落地页...<br><br>设计方向：<br>- 🎨 深色背景 + 蓝紫渐变光效<br>- 📐 不对称布局，打破传统网格<br>- ✨ 滚动入场动画 + 悬停微交互<br><br><span class="code-tag">✏️ 正在生成 index.html / style.css / script.js</span></div>
+        </div>
+        <div class="callout callout-tip">
+          <strong>💡 效果：</strong>使用 frontend-design skill 后，AI 会主动选择独特的字体、大胆的配色、精致的动效，而不是生成千篇一律的模板页面。本手册的页面风格就是参考该 skill 的设计理念制作的。
+        </div>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ 协议提醒：</strong>文档类技能（docx/pdf/pptx/xlsx）为 source-available 协议；其他技能均为 Apache 2.0 开源协议。
+        </div>
+      </div>
+
+      <!-- ========== 方式三：npm 安装 ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">方式三</span>
+          <h3>npm 安装开发框架</h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>OpenSpec — 规范驱动开发框架</h4>
+          <p><a href="https://github.com/Fission-AI/OpenSpec" target="_blank"><strong>OpenSpec</strong></a> 是一套<strong>规范驱动开发（Spec-Driven Development）</strong>框架。核心理念：在第一行代码编写之前，先与 AI 对齐需求规范，让开发过程更可预测、更可控。特别适合中大型功能开发。</p>
+          <p style="margin-top:8px;">与前两种方式不同，OpenSpec 是一个独立的 <strong>CLI 工具</strong>，通过 npm 全局安装，不是往 <code>.codebuddy/skills/</code> 放文件。</p>
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>安装 OpenSpec</strong>
+              <div class="code-block code-block-sm">
+<pre>
+<span class="code-string">npm install -g openspec</span>    <span class="code-comment"># 全局安装</span>
+<span class="code-string">openspec init</span>               <span class="code-comment"># 在项目中初始化</span>
+</pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">OpenSpec 三阶段工作流</h4>
+        <div class="advanced-grid">
+          <div class="advanced-item">
+            <span class="advanced-icon">📋</span>
+            <div>
+              <strong>阶段一：提案（Proposal）</strong>
+              <p>用自然语言描述需求，AI 生成变更提案（Change Proposal），明确改什么、为什么改、影响范围</p>
+            </div>
+          </div>
+          <div class="advanced-item">
+            <span class="advanced-icon">📐</span>
+            <div>
+              <strong>阶段二：规范（Spec）→ 实施</strong>
+              <p>提案通过后，AI 生成详细技术规范（函数签名、数据结构、测试用例），确认后执行编码</p>
+            </div>
+          </div>
+          <div class="advanced-item">
+            <span class="advanced-icon">📦</span>
+            <div>
+              <strong>阶段三：归档（Archive）</strong>
+              <p>实施完成后归档规范，作为项目文档沉淀，后续迭代可追溯决策上下文</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 如何选择？</strong>
+          <strong>插件市场</strong>（Superpowers 等）适合快速获取工程方法论；
+          <strong>GitHub 安装</strong>（Anthropic Skills 等）适合按需拷贝即用型能力；
+          <strong>npm 安装</strong>（OpenSpec 等）适合引入独立开发框架；
+          <strong>手动创建</strong>适合定制团队专属规范。四种方式可按需组合使用。
+        </div>
+      </div>
+
+      <!-- ========== 方式四：手动创建 ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">方式四</span>
+          <h3>手动创建自定义 Skill</h3>
+        </div>
+
+        <h4 class="subsection-title">配置步骤</h4>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>创建目录结构</strong>
+              <p>在项目根目录下创建 <code>.codebuddy/skills/</code> 目录，为每个 Skill 创建一个子文件夹。</p>
+              <div class="code-block">
+<pre>
+<span class="code-comment"># 项目目录结构</span>
+my-project/
+├── .codebuddy/
+│   └── skills/
+│       ├── jave-code-review/
+│       │   └── SKILL.md
+│       ├── api-design/
+│       │   └── SKILL.md
+│       └── unit-test/
+│           └── SKILL.md
+├── src/
+└── package.json
+</pre>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>编写 SKILL.md</strong>
+              <p>在子文件夹中创建 <code>SKILL.md</code> 文件，使用 YAML 头部 + Markdown 正文定义技能行为。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="skill-api">JAVA代码审查</button>
+            <button class="tab-btn" data-tab="skill-test">单元测试</button>
+            <button class="tab-btn" data-tab="skill-perf">性能优化</button>
+          </div>
+          <div class="tab-content active" id="skill-api">
+            <div class="code-block markdown-body" data-markdown>
+
+```yaml
+---
+name: java-code-review
+description: 专业的 Java 代码审查工具，从架构、稳定性、性能、可观测性、安全五大维度深度分析代码质量
+metadata:
+  {
+    "version": "1.0.0",
+    "author": "AI Code Reviewer",
+    "category": "code-quality",
+    "tags": ["java", "code-review", "architecture", "performance", "security"]
+  }
+---
+```
+
+# Java Code Review Skill
+
+你是一位**资深的 Java 架构师和代码审查专家**，拥有 10+ 年的企业级 Java 开发经验。你的职责是对 Java 代码进行全面、深度的审查，从以下五个维度提供专业建议：
+
+## 🎯 审查维度（5 大核心）
+
+### 1. 架构合规性与边界 (Architecture & Boundaries)
+- **分层架构**: Controller → Service → Repository 分层是否清晰
+- **职责单一**: 每个类/方法是否职责明确，符合 SRP（单一职责原则）
+- **依赖合理性**: 
+  - 上层不依赖下层具体实现（依赖倒置原则）
+  - 模块间依赖关系清晰，无循环依赖
+  - 强依赖 vs 弱依赖（接口 vs 实现类）
+- **边界清晰**: DTO、VO、PO、Entity 等对象边界明确
+
+### 2. 稳定性 (Stability & Reliability)
+- **资源管理**: 
+  - 数据库连接、文件句柄、Socket 是否正确关闭
+  - try-with-resources 使用
+  - 线程池、连接池管理
+- **分布式环境**: 
+  - 接口幂等性（防止重复提交）
+  - 分布式事务处理（2PC、TCC、SAGA）
+  - 分布式锁（Redis、Zookeeper）
+- **事务管理**: 
+  - @Transactional 使用是否正确
+  - 事务传播行为
+  - 事务边界
+- **并发安全**: 
+  - 线程安全（synchronized、volatile、Lock）
+  - 并发容器使用（ConcurrentHashMap、CopyOnWriteArrayList）
+  - 避免死锁
+
+### 3. 性能和资源损耗 (Performance & Resource)
+- **数据库优化**: 
+  - SQL 是否有 N+1 问题
+  - 索引使用是否合理
+  - 批量操作 vs 单条操作
+  - 分页查询是否正确
+- **缓存使用**: 
+  - Redis 缓存设计（过期时间、缓存穿透/击穿/雪崩）
+  - 本地缓存（Guava Cache、Caffeine）
+  - 缓存一致性
+- **JVM 内存管理**: 
+  - 大对象创建
+  - 内存泄漏风险（静态集合、ThreadLocal 未清理）
+  - 频繁 Full GC 的隐患
+  - 对象复用
+
+### 4. 可观测性和可维护性 (Observability & Maintainability)
+- **异常处理**: 
+  - 异常分类（业务异常 vs 系统异常）
+  - 异常不吞没
+  - 自定义异常
+  - 全局异常处理
+- **重试机制**: 
+  - 重试策略（指数退避）
+  - 幂等性保证
+  - 熔断降级
+- **日志打印质量**: 
+  - 日志级别正确（DEBUG/INFO/WARN/ERROR）
+  - 关键参数记录
+  - 敏感信息脱敏
+  - TraceId 传递
+- **代码可读性**: 
+  - 避免大量 if-else（策略模式、责任链模式）
+  - 魔法数字/字符串提取为常量
+  - 方法长度控制（< 50 行）
+  - 注释质量
+- **扩展性**: 
+  - 开闭原则（对扩展开放，对修改关闭）
+  - 依赖注入 vs 硬编码
+  - 配置外部化
+
+### 5. 安全合规 (Security & Compliance)
+- **越权防护**: 
+  - 接口权限校验
+  - 数据权限隔离
+  - 用户身份验证
+- **敏感数据处理**: 
+  - 密码加密（BCrypt、Argon2）
+  - 敏感字段脱敏
+  - SQL 注入防护（参数化查询）
+  - XSS 防护
+  - CSRF 防护
+- **防御性编程**: 
+  - 参数校验（@Valid、@NotNull）
+  - 空指针防护（Optional、Objects.requireNonNull）
+  - 类型安全
+  - 边界检查
+            </div>
+          </div>
+          <div class="tab-content" id="skill-test">
+            <div class="code-block markdown-body" data-markdown>
+```yaml
+---
+name: unit-test
+description: 为函数/模块生成完备的单元测试用例
+---
+```
+
+# 单元测试生成技能
+
+## 测试策略
+- 正常路径：验证预期输入的正确输出
+- 边界条件：空值、极大值、极小值、空数组
+- 异常路径：错误输入、网络超时、权限不足
+- 并发场景：竞态条件、死锁检测
+
+## 技术选型
+- JavaScript/TypeScript：Jest + Testing Library
+- Go：标准 testing 包 + testify
+- Python：pytest + unittest.mock
+
+## 覆盖率要求
+- 行覆盖率 ≥ 80%
+- 分支覆盖率 ≥ 70%
+- 关键路径 100% 覆盖
+            </div>
+          </div>
+          <div class="tab-content" id="skill-perf">
+            <div class="code-block markdown-body" data-markdown>
+```yaml
+---
+name: perf-optimize
+description: 分析代码性能瓶颈并给出优化方案
+---
+```
+
+# 性能优化技能
+
+## 分析维度
+- **数据库**：慢查询、缺失索引、N+1 问题
+- **前端渲染**：不必要的 re-render、大列表虚拟化
+- **网络请求**：请求合并、缓存策略、CDN
+- **内存管理**：泄漏检测、大对象优化
+
+## 输出要求
+1. 量化分析：给出优化前后的性能对比预估
+2. 优先级排序：按性能收益从高到低排列
+3. 代码示例：每个优化项附带 Before/After 代码
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 使用方式：</strong>在对话中输入 <code>/</code> 或 <code>@技能名</code> 即可触发对应 Skill。例如输入 <code>@code-review</code> 审查当前文件。
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="install.html" class="page-nav-btn prev">← 上一章：下载/安装</a>
+        <a href="agent.html" class="page-nav-btn next">下一章：配置自定义智能体 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实战：Java 秒杀 API 服务 - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div><button class="sidebar-toggle" id="sidebarClose">&times;</button></div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+  <section class="section section-dark">
+    <div class="section-inner">
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">5.1</span>
+          <h3>开发 Java 秒杀商品 API 服务</h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>项目背景</h4>
+          <p>使用 Spring Boot 开发一个秒杀商品的 API 后端服务，需要处理高并发库存扣减、订单创建、防超卖等核心问题。采用 OpenSpec（规范驱动开发）+ Superpowers（工程方法论）组合，分两个 Spec 迭代完成。</p>
+          <div class="mcp-features" style="margin-top:12px;">
+            <span class="mcp-tag">Spring Boot 3</span>
+            <span class="mcp-tag">MyBatis-Plus</span>
+            <span class="mcp-tag">Redis</span>
+            <span class="mcp-tag">MySQL</span>
+            <span class="mcp-tag">OpenSpec</span>
+            <span class="mcp-tag">Superpowers</span>
+          </div>
+        </div>
+
+        <!-- ===== 阶段零：初始化 ===== -->
+        <h4 class="subsection-title">阶段零：项目初始化</h4>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p>初始化 OpenSpec 工作目录</p>
+              <div class="code-block code-block-sm"><pre><span class="code-string">openspec init</span></pre></div>
+              <p class="code-desc">在项目根目录生成 <code>.openspec/</code> 目录，用于存放变更提案和技术规范。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Spec 1：数据库设计 ===== -->
+        <h4 class="subsection-title">Spec 1：数据库设计与基础模型</h4>
+
+        <div class="card">
+          <p>目标：设计秒杀业务的数据库表结构，包括商品表、秒杀活动表、秒杀订单表，生成 MyBatis-Plus 实体类和 Mapper。</p>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 1 — 头脑风暴需求（Superpowers: brainstorming）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/brainstorming 秒杀商品 API 的数据库设计，需要支持：商品管理、秒杀活动配置（时间窗口、库存、限购）、秒杀订单记录、库存防超卖</div>
+          <div class="chat-bubble ai">🧠 需求澄清与探索：<br><br>1. 核心实体：Product（商品）、SeckillActivity（秒杀活动）、SeckillOrder（秒杀订单）<br>2. 关键约束：一个商品可有多个秒杀活动（不同时间段），每个活动有独立库存<br>3. 防超卖策略：数据库乐观锁（stock > 0）+ Redis 预扣减<br>4. 限购机制：user_id + activity_id 联合唯一索引<br>5. 建议增加：秒杀活动状态机（未开始→进行中→已结束）<br><br>是否需要支持分库分表？当前先按单库设计。</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 2 — 创建变更提案（OpenSpec: propose）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec propose "设计秒杀业务数据库表结构，包含商品表、秒杀活动表、秒杀订单表，支持乐观锁防超卖和用户限购"</div>
+          <div class="chat-bubble ai">📋 变更提案 CP-001 已生成：<br><br>文件：<code>.openspec/proposals/CP-001-seckill-database.md</code><br><br>变更范围：<br>- 新增 3 张业务表 + DDL 脚本<br>- 新增 MyBatis-Plus Entity / Mapper / Service 基础代码<br>- 新增 Flyway 迁移脚本<br><br>影响分析：无现有代码受影响（新项目）<br><br>请 review 提案内容，确认后进入 Spec 阶段。</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 3 — 生成技术规范（OpenSpec: spec）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec spec CP-001</div>
+          <div class="chat-bubble ai">📐 技术规范 SPEC-001 已生成：<br><br>文件：<code>.openspec/specs/SPEC-001-seckill-database.md</code></div>
+        </div>
+
+        <p style="margin: 12px 0 8px; color: var(--text-dim); font-size: 14px;">生成的规范包含完整的 DDL 和实体定义：</p>
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="spec1-ddl">DDL 脚本</button>
+            <button class="tab-btn" data-tab="spec1-entity">实体类</button>
+          </div>
+          <div class="tab-content active" id="spec1-ddl">
+            <div class="code-block markdown-body" data-markdown>
+```sql
+-- V1__seckill_schema.sql
+
+CREATE TABLE product (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(200) NOT NULL COMMENT '商品名称',
+    description TEXT COMMENT '商品描述',
+    price DECIMAL(10,2) NOT NULL COMMENT '原价',
+    stock INT NOT NULL DEFAULT 0 COMMENT '总库存',
+    status TINYINT NOT NULL DEFAULT 1 COMMENT '1-上架 0-下架',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status)
+) COMMENT '商品表';
+
+CREATE TABLE seckill_activity (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    product_id BIGINT NOT NULL COMMENT '关联商品ID',
+    seckill_price DECIMAL(10,2) NOT NULL COMMENT '秒杀价',
+    total_stock INT NOT NULL COMMENT '秒杀库存总量',
+    available_stock INT NOT NULL COMMENT '可用库存（乐观锁扣减）',
+    buy_limit INT NOT NULL DEFAULT 1 COMMENT '每人限购数量',
+    start_time DATETIME NOT NULL COMMENT '秒杀开始时间',
+    end_time DATETIME NOT NULL COMMENT '秒杀结束时间',
+    status TINYINT NOT NULL DEFAULT 0 COMMENT '0-未开始 1-进行中 2-已结束',
+    version INT NOT NULL DEFAULT 0 COMMENT '乐观锁版本号',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_product (product_id),
+    INDEX idx_status_time (status, start_time, end_time)
+) COMMENT '秒杀活动表';
+
+CREATE TABLE seckill_order (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id BIGINT NOT NULL COMMENT '用户ID',
+    activity_id BIGINT NOT NULL COMMENT '秒杀活动ID',
+    product_id BIGINT NOT NULL COMMENT '商品ID',
+    order_no VARCHAR(64) NOT NULL COMMENT '订单编号',
+    seckill_price DECIMAL(10,2) NOT NULL COMMENT '秒杀成交价',
+    quantity INT NOT NULL DEFAULT 1 COMMENT '购买数量',
+    status TINYINT NOT NULL DEFAULT 0 COMMENT '0-待支付 1-已支付 2-已取消',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uk_user_activity (user_id, activity_id),
+    UNIQUE KEY uk_order_no (order_no),
+    INDEX idx_user (user_id)
+) COMMENT '秒杀订单表';
+```
+            </div>
+          </div>
+          <div class="tab-content" id="spec1-entity">
+            <div class="code-block markdown-body" data-markdown>
+```java
+// SeckillActivity.java
+@Data
+@TableName("seckill_activity")
+public class SeckillActivity {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private Long productId;
+    private BigDecimal seckillPrice;
+    private Integer totalStock;
+    private Integer availableStock;
+    private Integer buyLimit;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+    private Integer status; // 0-未开始 1-进行中 2-已结束
+    @Version
+    private Integer version; // MyBatis-Plus 乐观锁
+    private LocalDateTime createdAt;
+}
+
+// SeckillOrder.java
+@Data
+@TableName("seckill_order")
+public class SeckillOrder {
+    @TableId(type = IdType.AUTO)
+    private Long id;
+    private Long userId;
+    private Long activityId;
+    private Long productId;
+    private String orderNo;
+    private BigDecimal seckillPrice;
+    private Integer quantity;
+    private Integer status; // 0-待支付 1-已支付 2-已取消
+    private LocalDateTime createdAt;
+}
+```
+            </div>
+          </div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 4 — 执行实施（OpenSpec: implement）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec implement SPEC-001</div>
+          <div class="chat-bubble ai"><span class="code-tag">🚀 正在执行 SPEC-001...</span><br><br>✅ 创建 <code>src/main/resources/db/migration/V1__seckill_schema.sql</code><br>✅ 创建 <code>entity/Product.java</code>、<code>entity/SeckillActivity.java</code>、<code>entity/SeckillOrder.java</code><br>✅ 创建 <code>mapper/ProductMapper.java</code>、<code>mapper/SeckillActivityMapper.java</code>、<code>mapper/SeckillOrderMapper.java</code><br>✅ 创建 <code>service/ProductService.java</code>（基础 CRUD）<br>✅ 配置 MyBatis-Plus 乐观锁插件<br><br>共创建 9 个文件，修改 1 个配置文件。</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 5 — 代码审查（Superpowers: code-review）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/code-review 审查 Spec 1 生成的数据库设计和实体类代码</div>
+          <div class="chat-bubble ai">🔍 Code Review 结果：<br><br>✅ 表结构设计合理，索引覆盖查询场景<br>✅ 乐观锁 @Version 注解正确<br>✅ uk_user_activity 唯一索引保证限购<br><br>⚠️ 建议改进：<br>1. seckill_order.order_no 建议使用雪花算法生成，避免 UUID 索引性能问题<br>2. 建议为 seckill_activity 增加 deleted 软删除字段<br>3. product.stock 与 seckill_activity.total_stock 关系需在 Service 层校验一致性</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 6 — 归档（OpenSpec: archive）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec archive SPEC-001</div>
+          <div class="chat-bubble ai">📦 SPEC-001 已归档至 <code>.openspec/archive/SPEC-001-seckill-database.md</code><br>包含：提案 → 规范 → 实施记录 → Review 结论，可追溯完整决策链路。</div>
+        </div>
+
+        <!-- ===== Spec 2：秒杀服务开发 ===== -->
+        <h4 class="subsection-title">Spec 2：秒杀核心服务开发</h4>
+
+        <div class="card">
+          <p>目标：实现秒杀下单 API，包含 Redis 预扣减、数据库乐观锁扣减、订单创建、限购校验、接口限流等完整链路。</p>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 1 — 编写实施计划（Superpowers: writing-plans）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/writing-plans 秒杀下单 API 的实施计划，需求：<br>1. POST /api/seckill/{activityId} 秒杀下单接口<br>2. Redis 预扣减库存（Lua 脚本保证原子性）<br>3. 数据库乐观锁兜底<br>4. 用户限购校验<br>5. 接口限流（令牌桶）<br>6. 统一异常处理</div>
+          <div class="chat-bubble ai">📝 实施计划已生成：<br><br>Phase 1 — 基础设施层<br>├── 1.1 Redis 配置 + Lua 库存扣减脚本<br>├── 1.2 统一响应体 + 业务异常枚举<br>└── 1.3 接口限流注解 @RateLimit + AOP<br><br>Phase 2 — 核心业务层<br>├── 2.1 SeckillService.executeSeckill() 主流程<br>├── 2.2 库存预热：活动开始前将库存加载到 Redis<br>└── 2.3 订单号生成（雪花算法）<br><br>Phase 3 — 接口层<br>├── 3.1 SeckillController + 参数校验<br>└── 3.2 Swagger 文档注解<br><br>Phase 4 — 测试<br>├── 4.1 单元测试（Mock Redis）<br>└── 4.2 并发压测脚本（JMeter / wrk）<br><br>各 Phase 无循环依赖，确认后按序执行。</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 2 — 创建提案并生成规范（OpenSpec）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec propose "实现秒杀下单核心服务：Redis预扣减 + 乐观锁 + 限购校验 + 令牌桶限流"</div>
+          <div class="chat-bubble ai">📋 变更提案 CP-002 已生成。</div>
+          <div class="chat-bubble user">openspec spec CP-002</div>
+          <div class="chat-bubble ai">📐 技术规范 SPEC-002 已生成，包含：<br>- SeckillService 接口签名与流程伪代码<br>- Redis Lua 脚本定义<br>- 异常码枚举（STOCK_NOT_ENOUGH / ACTIVITY_NOT_STARTED / ALREADY_BOUGHT / RATE_LIMITED）<br>- Controller 接口契约（Request / Response DTO）</div>
+        </div>
+
+        <p style="margin: 12px 0 8px; color: var(--text-dim); font-size: 14px;">规范中的核心代码设计：</p>
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="spec2-lua">Redis Lua 脚本</button>
+            <button class="tab-btn" data-tab="spec2-service">秒杀服务</button>
+            <button class="tab-btn" data-tab="spec2-controller">Controller</button>
+          </div>
+          <div class="tab-content active" id="spec2-lua">
+            <div class="code-block markdown-body" data-markdown>
+```lua
+-- seckill_stock.lua
+-- KEYS[1]: 库存 key (seckill:stock:{activityId})
+-- KEYS[2]: 已购用户集合 key (seckill:bought:{activityId})
+-- ARGV[1]: 用户ID
+-- ARGV[2]: 限购数量
+
+-- 1. 检查用户是否已购买
+local bought = redis.call('SISMEMBER', KEYS[2], ARGV[1])
+if bought == 1 then
+    return -2  -- 已购买
+end
+
+-- 2. 检查库存
+local stock = tonumber(redis.call('GET', KEYS[1]))
+if stock == nil or stock <= 0 then
+    return -1  -- 库存不足
+end
+
+-- 3. 扣减库存 + 记录用户
+redis.call('DECR', KEYS[1])
+redis.call('SADD', KEYS[2], ARGV[1])
+return 1  -- 成功
+```
+            </div>
+          </div>
+          <div class="tab-content" id="spec2-service">
+            <div class="code-block markdown-body" data-markdown>
+```java
+@Service
+@Slf4j
+public class SeckillServiceImpl implements SeckillService {
+
+    @Autowired private StringRedisTemplate redisTemplate;
+    @Autowired private SeckillActivityMapper activityMapper;
+    @Autowired private SeckillOrderMapper orderMapper;
+    @Autowired private RedisScript<Long> seckillScript;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public SeckillResult executeSeckill(Long userId, Long activityId) {
+        // 1. 活动有效性校验
+        SeckillActivity activity = activityMapper.selectById(activityId);
+        if (activity == null || activity.getStatus() != 1) {
+            throw new BizException(ErrorCode.ACTIVITY_NOT_STARTED);
+        }
+
+        // 2. Redis 预扣减（Lua 原子操作）
+        Long result = redisTemplate.execute(seckillScript,
+            List.of("seckill:stock:" + activityId,
+                     "seckill:bought:" + activityId),
+            userId.toString(),
+            activity.getBuyLimit().toString());
+
+        if (result == -1) throw new BizException(ErrorCode.STOCK_NOT_ENOUGH);
+        if (result == -2) throw new BizException(ErrorCode.ALREADY_BOUGHT);
+
+        // 3. 数据库乐观锁扣减（兜底）
+        int rows = activityMapper.deductStock(activityId);
+        if (rows == 0) {
+            // Redis 回滚
+            redisTemplate.opsForValue().increment("seckill:stock:" + activityId);
+            redisTemplate.opsForSet().remove("seckill:bought:" + activityId, userId.toString());
+            throw new BizException(ErrorCode.STOCK_NOT_ENOUGH);
+        }
+
+        // 4. 创建订单
+        SeckillOrder order = new SeckillOrder();
+        order.setUserId(userId);
+        order.setActivityId(activityId);
+        order.setProductId(activity.getProductId());
+        order.setOrderNo(SnowflakeIdGenerator.nextOrderNo());
+        order.setSeckillPrice(activity.getSeckillPrice());
+        order.setQuantity(1);
+        order.setStatus(0);
+        orderMapper.insert(order);
+
+        return SeckillResult.success(order.getOrderNo());
+    }
+}
+```
+            </div>
+          </div>
+          <div class="tab-content" id="spec2-controller">
+            <div class="code-block markdown-body" data-markdown>
+```java
+@RestController
+@RequestMapping("/api/seckill")
+@Slf4j
+public class SeckillController {
+
+    @Autowired private SeckillService seckillService;
+
+    @PostMapping("/{activityId}")
+    @RateLimit(qps = 1000) // 令牌桶限流
+    public Result<SeckillResult> doSeckill(
+            @PathVariable Long activityId,
+            @RequestHeader("X-User-Id") Long userId) {
+
+        log.info("秒杀请求: userId={}, activityId={}", userId, activityId);
+        SeckillResult result = seckillService.executeSeckill(userId, activityId);
+        return Result.ok(result);
+    }
+
+    @GetMapping("/{activityId}/result")
+    public Result<OrderVO> queryResult(
+            @PathVariable Long activityId,
+            @RequestHeader("X-User-Id") Long userId) {
+
+        OrderVO vo = seckillService.querySeckillResult(userId, activityId);
+        return Result.ok(vo);
+    }
+}
+```
+            </div>
+          </div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 3 — 执行实施</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">openspec implement SPEC-002</div>
+          <div class="chat-bubble ai"><span class="code-tag">🚀 正在执行 SPEC-002...</span><br><br>✅ 创建 <code>config/RedisConfig.java</code> — Redis 配置 + Lua 脚本注册<br>✅ 创建 <code>scripts/seckill_stock.lua</code> — 原子扣减脚本<br>✅ 创建 <code>common/Result.java</code> + <code>ErrorCode.java</code> — 统一响应体<br>✅ 创建 <code>common/BizException.java</code> + <code>GlobalExceptionHandler.java</code><br>✅ 创建 <code>annotation/RateLimit.java</code> + <code>aspect/RateLimitAspect.java</code><br>✅ 创建 <code>service/SeckillService.java</code> + <code>SeckillServiceImpl.java</code><br>✅ 创建 <code>util/SnowflakeIdGenerator.java</code><br>✅ 创建 <code>controller/SeckillController.java</code><br>✅ 创建 <code>dto/SeckillResult.java</code> + <code>OrderVO.java</code><br><br>共创建 12 个文件。</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 4 — TDD 验证（Superpowers: test-driven-dev）</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/test-driven-dev 为秒杀服务编写单元测试，覆盖：正常秒杀、库存不足、重复购买、活动未开始</div>
+          <div class="chat-bubble ai">🧪 生成测试类 <code>SeckillServiceTest.java</code>：<br><br>✅ test_seckill_success — 正常秒杀流程<br>✅ test_seckill_stock_not_enough — Redis 返回 -1<br>✅ test_seckill_already_bought — Redis 返回 -2<br>✅ test_seckill_activity_not_started — 活动状态校验<br>✅ test_seckill_db_optimistic_lock_fail — 乐观锁冲突回滚<br>✅ test_concurrent_seckill — 100 线程并发测试防超卖<br><br>测试运行结果：6 tests passed ✅</div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">Step 5 — 最终审查 + 归档</h4>
+        <div class="chat-demo" style="margin: 0 0 20px;">
+          <div class="chat-bubble user">/code-review 审查 Spec 2 全部代码</div>
+          <div class="chat-bubble ai">🔍 Code Review 结果：<br><br>✅ Redis Lua 脚本原子性保证正确<br>✅ 乐观锁 + Redis 双重保障防超卖<br>✅ 限流注解解耦，QPS 可配置<br>✅ 异常处理完善，错误码语义清晰<br>✅ 6 个测试用例覆盖核心场景<br><br>⚠️ 建议后续迭代：<br>1. 秒杀结果可改为异步查询（MQ + 轮询）提升吞吐<br>2. 增加 Sentinel 熔断降级<br>3. 库存预热可做成定时任务自动触发</div>
+          <div class="chat-bubble user">openspec archive SPEC-002</div>
+          <div class="chat-bubble ai">📦 SPEC-002 已归档。两个 Spec 全部完成，项目文档可追溯。</div>
+        </div>
+
+        <!-- 流程总结 -->
+        <h4 class="subsection-title">完整开发流程回顾</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>阶段</span><span>工具 / 命令</span><span>产出</span>
+          </div>
+          <div class="config-row"><span>需求澄清</span><span><code>/brainstorming</code></span><span>明确实体关系、防超卖策略</span></div>
+          <div class="config-row"><span>变更提案</span><span><code>openspec propose</code></span><span>CP-001、CP-002 提案文档</span></div>
+          <div class="config-row"><span>技术规范</span><span><code>openspec spec</code></span><span>DDL、接口签名、Lua 脚本定义</span></div>
+          <div class="config-row"><span>实施计划</span><span><code>/writing-plans</code></span><span>4 Phase 分步计划</span></div>
+          <div class="config-row"><span>代码生成</span><span><code>openspec implement</code></span><span>21 个文件（实体 + 服务 + 接口）</span></div>
+          <div class="config-row"><span>测试验证</span><span><code>/test-driven-dev</code></span><span>6 个单元测试，全部通过</span></div>
+          <div class="config-row"><span>代码审查</span><span><code>/code-review</code></span><span>Review 报告 + 改进建议</span></div>
+          <div class="config-row"><span>归档沉淀</span><span><code>openspec archive</code></span><span>完整决策链路文档</span></div>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 关键收获：</strong>OpenSpec 负责「提案 → 规范 → 实施 → 归档」的结构化流程，Superpowers 负责每个环节的工程质量（brainstorming 需求探索、writing-plans 计划拆解、test-driven-dev 测试先行、code-review 质量把关）。两者结合，让 AI 编程从「随便写写」变成「可追溯的工程化开发」。
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="examples.html" class="page-nav-btn prev">← 上一章：实战案例</a>
+        <a href="faq.html" class="page-nav-btn next">下一章：常见问题 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

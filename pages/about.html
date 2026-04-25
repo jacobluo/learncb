@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CodeBuddy 介绍 - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+
+<!-- 侧边导航 -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo">
+      <span class="logo-icon">CB</span>
+      <span class="logo-text">操作手册</span>
+    </div>
+    <button class="sidebar-toggle" id="sidebarClose">&times;</button>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+
+  <section class="section section-dark">
+    <div class="section-inner">
+      <h2 class="section-title"><span class="section-num">02</span>CodeBuddy 介绍</h2>
+
+      <h3 class="subsection-title">三大核心交互模式</h3>
+      <div class="modes-grid">
+        <div class="mode-card mode-ask">
+          <div class="mode-badge">Ask</div>
+          <h4>对话模式</h4>
+          <p>技术问答与概念解释，不直接修改代码。适合快速获取思路或查阅 API。</p>
+          <div class="mode-example">
+            <div class="mode-example-label">示例对话：</div>
+            <div class="chat-bubble user">React useEffect 和 useLayoutEffect 的区别是什么？</div>
+            <div class="chat-bubble ai">useEffect 在浏览器渲染完成后异步执行，而 useLayoutEffect 在 DOM 变更后、浏览器重绘前同步执行...</div>
+          </div>
+        </div>
+        <div class="mode-card mode-craft">
+          <div class="mode-badge">Craft</div>
+          <h4>Agent 模式</h4>
+          <p>当前上下文的代码生成与局部修改，响应迅速，适合精准函数编写或小范围重构。</p>
+          <div class="mode-example">
+            <div class="mode-example-label">示例对话：</div>
+            <div class="chat-bubble user">帮我给 UserService 类添加一个分页查询方法，使用 cursor 分页</div>
+            <div class="chat-bubble ai">我来为 UserService 添加 cursor 分页查询方法... <span class="code-tag">✏️ 正在编辑 user.service.ts</span></div>
+          </div>
+        </div>
+        <div class="mode-card mode-plan">
+          <div class="mode-badge">Plan</div>
+          <h4>计划模式</h4>
+          <p>最强自动化模式，适用于跨文件修改或复杂功能开发。AI 先制定任务清单，确认后自主执行。</p>
+          <div class="mode-example">
+            <div class="mode-example-label">示例对话：</div>
+            <div class="chat-bubble user">给项目添加完整的用户认证模块，包含注册、登录、JWT 和中间件</div>
+            <div class="chat-bubble ai">📋 任务计划：<br>1. 创建 auth.controller.ts<br>2. 创建 auth.service.ts<br>3. 配置 JWT 中间件<br>4. 添加路由守卫<br>5. 编写单元测试</div>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="subsection-title">进阶特性一览</h3>
+      <div class="advanced-grid">
+        <div class="advanced-item">
+          <span class="advanced-icon">🧠</span>
+          <div>
+            <strong>Memory（记忆偏好）</strong>
+            <p>自动记录偏好与项目关键背景，AI 越用越精准</p>
+          </div>
+        </div>
+        <div class="advanced-item">
+          <span class="advanced-icon">📐</span>
+          <div>
+            <strong>Rules（规则）</strong>
+            <p>通过 <code>.codebuddy/rules</code> 强制 AI 遵循特定架构设计或编码规范</p>
+          </div>
+        </div>
+        <div class="advanced-item">
+          <span class="advanced-icon">🛠️</span>
+          <div>
+            <strong>Skills（技能库）</strong>
+            <p>通过 <code>.codebuddy/skills/</code> 封装专业指令集</p>
+          </div>
+        </div>
+        <div class="advanced-item">
+          <span class="advanced-icon">🔌</span>
+          <div>
+            <strong>MCP（模型上下文协议）</strong>
+            <p>开放协议，支持接入第三方工具（数据库、实时搜索等）</p>
+          </div>
+        </div>
+        <div class="advanced-item">
+          <span class="advanced-icon">🤖</span>
+          <div>
+            <strong>自定义 Agent</strong>
+            <p>根据特定业务逻辑或工作习惯，定制专属 AI 智能体</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 class="subsection-title">快捷键速查</h3>
+      <div class="shortcuts-table">
+        <div class="shortcut-row shortcut-header">
+          <span>操作系统</span><span>内联对话</span><span>打开侧边栏</span><span>NES 触发</span>
+        </div>
+        <div class="shortcut-row">
+          <span>macOS</span>
+          <span><kbd>⌘</kbd> + <kbd>I</kbd></span>
+          <span><kbd>Ctrl</kbd> + <kbd>⌘</kbd> + <kbd>I</kbd></span>
+          <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd></span>
+        </div>
+        <div class="shortcut-row">
+          <span>Windows</span>
+          <span><kbd>Ctrl</kbd> + <kbd>I</kbd></span>
+          <span><kbd>Ctrl</kbd> + <kbd>Win</kbd> + <kbd>I</kbd></span>
+          <span><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd></span>
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="../index.html" class="page-nav-btn prev">← 上一章：简介</a>
+        <a href="install.html" class="page-nav-btn next">下一章：下载/安装 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>CodeBuddy 操作手册 · 腾讯云代码助手</p>
+  </footer>
+
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

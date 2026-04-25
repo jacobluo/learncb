@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配置 MCP - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div>
+    <button class="sidebar-toggle" id="sidebarClose">&times;</button>
+  </div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">3.1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">3.2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">3.3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
+    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
+    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
+    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+    <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+  <section class="section section-dark">
+    <div class="section-inner">
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">3.4</span>
+          <h3>配置 MCP <span class="time-badge">3-5 分钟</span></h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>什么是 MCP？</h4>
+          <p>MCP（Model Context Protocol，模型上下文协议）是一种标准化协议，让 AI 能够接入外部工具和数据源，例如数据库查询、API 调用、文件系统操作等，大大扩展 AI 的能力边界。</p>
+          <div class="mcp-features">
+            <span class="mcp-tag">上下文共享</span>
+            <span class="mcp-tag">工具暴露</span>
+            <span class="mcp-tag">可组合工作流</span>
+            <span class="mcp-tag">本地安全运行</span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">方式一：MCP Market 一键安装（推荐）</h4>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p>点击侧栏右上方 CodeBuddy Settings → 切换到 MCP 标签页</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <p>在 MCP Market 中浏览可用的 MCP Server，根据需求选择后点击一键安装</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="screenshot-wrapper" style="margin-top: 16px;">
+          <img src="../images/install-mcp-cnb.png" alt="MCP Market 安装 CNB 代码仓库" class="screenshot">
+          <div class="screenshot-caption">在 MCP Market 中搜索并安装 CNB 代码仓库 MCP Server</div>
+        </div>
+
+        <h4 class="subsection-title">方式二：自定义 JSON 配置</h4>
+        <p>点击 MCP 标签页下的 Add MCP 按钮，在 JSON 配置文件中添加：</p>
+
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="mcp-chrome">Chrome DevTools</button>
+            <button class="tab-btn" data-tab="mcp-pencil">Pencil 设计工具</button>
+          </div>
+          <div class="tab-content active" id="mcp-chrome">
+            <div class="code-block markdown-body" data-markdown>
+```json
+{
+  "chrome-devtools": {
+    "command": "npx",
+    "args": [
+      "-y",
+      "chrome-devtools-mcp@latest"
+    ],
+    "disabled": false
+  }
+}
+```
+            </div>
+            <p class="code-desc">让 AI 直接操作 Chrome 浏览器，进行页面截图、元素点击、性能分析、网络请求监控等 DevTools 操作。</p>
+          </div>
+          <div class="tab-content" id="mcp-pencil">
+            <div class="code-block markdown-body" data-markdown>
+```json
+{
+  "pencil": {
+    "name": "pencil",
+    "transport": "stdio",
+    "command": "/Users/robiluo/.codebuddycn/extensions/highagency.pencildev-0.6.44/out/mcp-server-darwin-arm64",
+    "args": [
+      "--app",
+      "codebuddy_cn"
+    ],
+    "env": {},
+    "disabled": false
+  }
+}
+```
+            </div>
+            <p class="code-desc">Pencil 设计工具，支持在 CodeBuddy 中进行 UI 设计、原型绘制，AI 可直接操作画布进行设计创作。</p>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">配置字段说明</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>字段</span><span>类型</span><span>说明</span>
+          </div>
+          <div class="config-row"><span><code>type</code></span><span>string</span><span>通信方式，通常为 <code>stdio</code></span></div>
+          <div class="config-row"><span><code>command</code></span><span>string</span><span>启动 MCP Server 的命令</span></div>
+          <div class="config-row"><span><code>args</code></span><span>string[]</span><span>命令参数列表</span></div>
+          <div class="config-row"><span><code>env</code></span><span>object</span><span>环境变量配置（可选）</span></div>
+          <div class="config-row"><span><code>description</code></span><span>string</span><span>MCP Server 的描述</span></div>
+        </div>
+
+        <h4 class="subsection-title">检查已启用的 MCP</h4>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p>点击侧栏右上方 CodeBuddy Settings → 切换到 MCP 标签页，即可查看所有已启用的 MCP Server 及其运行状态。</p>
+              <div class="screenshot-wrapper" style="margin-top: 16px;">
+                <img src="../images/check-mcp.png" alt="CodeBuddy 设置中查看已启用的 MCP Server" class="screenshot">
+                <div class="screenshot-caption">在 CodeBuddy 设置 → MCP 标签页中查看已启用的 MCP Server</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 验证安装：</strong>安装成功后，点击 MCP Server 右侧的 Try to Run 按钮进行测试。在 Craft Agent 模式下，Agent 会自动识别并调用已安装的 MCP 工具。
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="agent.html" class="page-nav-btn prev">← 上一章：配置自定义智能体</a>
+        <a href="rules.html" class="page-nav-btn next">下一章：配置 Rules →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>
