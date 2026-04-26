@@ -19,15 +19,15 @@ learncb/
 │   └── install-skill-superpowers.png
 └── pages/
     ├── about.html          # CodeBuddy 介绍
-    ├── install.html        # 3.1 下载/安装
-    ├── skills.html         # 3.2 配置 Skills
-    ├── agent.html          # 3.3 配置自定义智能体
-    ├── mcp.html            # 3.4 配置 MCP
-    ├── rules.html          # 3.5 配置 Rules
-├── planmode.html       # 四、实战案例-PLAN模式
+├── install.html        # 三-1 下载/安装
+├── skills.html         # 三-2 配置 Skills
+├── agent.html          # 三-3 配置自定义智能体
+├── mcp.html            # 三-4 配置 MCP
+├── rules.html          # 三-5 配置 Rules
+├── planmode.html       # 四、实战案例-Plan 模式
     ├── examples.html       # 五、实战案例
     ├── seckill.html        # 5.1 Java 秒杀 API 服务
-    └── resources.html      # 七、参考资源
+└── resources.html      # 七、更多阅读
 ```
 
 ## 设计要求
