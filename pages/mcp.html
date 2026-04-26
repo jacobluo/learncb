@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/vitepress-theme.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -27,10 +28,9 @@
     <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
     <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
     <li class="nav-section">实战</li>
-    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
-    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
-    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
-    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+<li><a href="planmode.html" class="nav-link">四、实战案例-PLAN模式</a></li>
+    <li><a href="seckill.html" class="nav-link">五、实战案例-后台开发</a></li>
+    <li><a href="fullstackdev.html" class="nav-link">六、实战案例-全栈开发</a></li>
     <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
   </ul>
 </nav>
@@ -56,6 +56,165 @@
             <span class="mcp-tag">本地安全运行</span>
           </div>
         </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 案例预告：</strong>后续实战案例中，<strong>全栈开发</strong>会用到 <code>Chrome DevTools</code>（页面调试 / 截图 / 网络分析）和 <code>Pencil</code>（UI 原型绘制）。请先按下面步骤安装这 2 个 MCP。
+        </div>
+      </div>
+
+      <!-- ========== 案例必装：MCP ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">必装</span>
+          <h3>案例所需的 MCP</h3>
+        </div>
+
+        <p>依次安装以下 MCP Server。</p>
+
+        <!-- MCP 1: Chrome DevTools -->
+        <h4 class="subsection-title">1. Chrome DevTools — 浏览器调试 MCP</h4>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <p>手动 JSON 配置（Add MCP → 填入下方内容）：</p>
+              <div class="code-block code-block-sm" style="margin-top:8px;">
+<pre>
+<span class="code-string">{</span>
+<span class="code-string">  "chrome-devtools": {</span>
+<span class="code-string">    "command": "npx",</span>
+<span class="code-string">    "args": ["-y", "chrome-devtools-mcp@latest"],</span>
+<span class="code-string">    "disabled": false</span>
+<span class="code-string">  }</span>
+<span class="code-string">}</span>
+</pre>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <p>验证：打开 CodeBuddy Settings → MCP 标签页，在已启用的 MCP Server 列表中看到 <code>chrome-devtools</code> 且状态正常，即表示安装成功。</p>
+              <div class="screenshot-wrapper" style="margin-top: 16px;">
+                <img src="../images/install-mcp-devtools.png" alt="查看已启用的 Chrome DevTools MCP" class="screenshot">
+                <div class="screenshot-caption">在 MCP 标签页查看 chrome-devtools 是否已启用</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <p><strong>Chrome DevTools MCP</strong> 让 AI 直接操作本机 Chrome：打开页面、点击元素、审查 DOM、抓取网络请求、性能分析、控制台日志。前提是本机已安装 Chrome 浏览器。</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📸</div>
+            <h4>页面截图</h4>
+            <p>全页 / 视口 / 元素级截图</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🖱️</div>
+            <h4>DOM 操作</h4>
+            <p>点击、输入、等待元素</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🌐</div>
+            <h4>网络抓包</h4>
+            <p>监听请求、响应、耗时</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h4>性能分析</h4>
+            <p>Performance / Lighthouse</p>
+          </div>
+        </div>
+
+        <!-- MCP 2: Pencil -->
+        <h4 class="subsection-title">2. Pencil — UI 原型与设计 MCP</h4>
+
+        <div class="callout callout-warning" style="margin:12px 0;">
+          <strong>⚠️ 前置条件：</strong>Pencil 的 MCP Server 由 <strong>Pencil 插件</strong>自带。必须<strong>先在 CodeBuddy 中安装 Pencil 插件</strong>，否则 MCP Server 的可执行文件路径不存在，MCP 会启动失败。
+        </div>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>安装 Pencil 插件</strong>
+              <p>打开 CodeBuddy 左侧 <strong>Extensions</strong>（扩展）面板 → 搜索 <code>pencil</code> → 找到 <em>HighAgency · Pencil</em> → 点击安装。安装完成后建议重启一次 CodeBuddy。</p>
+              <div class="screenshot-wrapper" style="margin-top: 16px;">
+                <img src="../images/install-extension-pencil.png" alt="安装 Pencil 插件" class="screenshot">
+                <div class="screenshot-caption">扩展市场搜索 pencil 并安装</div>
+              </div>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>配置 Pencil MCP</strong>
+              <p>打开 CodeBuddy Settings → MCP → <strong>Add MCP</strong>，粘贴以下 JSON。注意把 <code>command</code> 中的路径替换为你本机实际的 Pencil 插件安装路径。</p>
+              <div class="code-block code-block-sm" style="margin-top:8px;">
+<pre>
+<span class="code-string">{</span>
+<span class="code-string">  "pencil": {</span>
+<span class="code-string">    "name": "pencil",</span>
+<span class="code-string">    "transport": "stdio",</span>
+<span class="code-string">    "command": "&lt;用户目录&gt;/.codebuddycn/extensions/highagency.pencildev-&lt;版本号&gt;/out/mcp-server-&lt;平台&gt;-&lt;架构&gt;",</span>
+<span class="code-string">    "args": ["--app", "codebuddy_cn"],</span>
+<span class="code-string">    "env": {},</span>
+<span class="code-string">    "disabled": false</span>
+<span class="code-string">  }</span>
+<span class="code-string">}</span>
+</pre>
+              </div>
+              <p style="margin-top: 0.5rem; color: var(--text-dim);">💡 <strong>macOS ARM64 示例路径</strong>：<code>/Users/你的用户名/.codebuddycn/extensions/highagency.pencildev-0.6.44/out/mcp-server-darwin-arm64</code>。版本号会随插件升级变化，建议到扩展目录下 <code>ls</code> 一下确认实际名称。</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>验证</strong>
+              <p>点击 Pencil MCP 右侧 <code>Try to Run</code>，状态变为 <strong>Running</strong> 即成功；在 Craft Agent 中让 AI "画一个登录页原型"即可看到 Pencil 画布响应。</p>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="margin-top:16px;">
+          <p><strong>Pencil</strong> 是 CodeBuddy 生态的 UI 原型 / 设计协作工具。接入 MCP 后，AI 可以直接在 Pencil 画布上绘制线框图、生成组件、调整布局，全栈开发案例中的界面设计环节会用到。</p>
+        </div>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h4>线框原型</h4>
+            <p>AI 自动生成低保真原型</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🧩</div>
+            <h4>组件生成</h4>
+            <p>按钮、表单、卡片一键生成</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">📐</div>
+            <h4>布局调整</h4>
+            <p>栅格对齐、尺寸微调</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔄</div>
+            <h4>迭代修改</h4>
+            <p>自然语言指令反复打磨</p>
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:20px;">
+          <strong>💡 安装完成！</strong>以上 2 个 MCP 就是实战案例所需的核心能力。其它 MCP 可按需从 MCP Market 或下方「通用配置参考」自行扩展。
+        </div>
+      </div>
+
+      <!-- ========== 阅读更多：通用配置参考 ========== -->
+      <details class="collapsible-block">
+        <summary>
+          <span class="step-badge">更多</span>
+          <h3>阅读更多：通用配置参考</h3>
+        </summary>
+        <div class="collapsible-body">
 
         <h4 class="subsection-title">方式一：MCP Market 一键安装（推荐）</h4>
         <div class="steps-list">
@@ -154,7 +313,9 @@
         <div class="callout callout-tip">
           <strong>💡 验证安装：</strong>安装成功后，点击 MCP Server 右侧的 Try to Run 按钮进行测试。在 Craft Agent 模式下，Agent 会自动识别并调用已安装的 MCP 工具。
         </div>
-      </div>
+
+        </div>
+      </details>
 
       <div class="page-nav">
         <a href="agent.html" class="page-nav-btn prev">← 上一章：配置自定义智能体</a>

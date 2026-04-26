@@ -1,0 +1,10 @@
+# 临时文件与探针
+tmp/
+
+# macOS 系统文件
+.DS_Store
+
+# 编辑器
+.vscode/
+.idea/
+*.swp

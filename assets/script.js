@@ -97,8 +97,11 @@ function openLightbox(img) {
   document.addEventListener('keydown', onKey)
 }
 
-// Auto-bind all .screenshot images to open Lightbox on click
-document.querySelectorAll('.screenshot').forEach(img => {
+// Auto-bind all .screenshot images and .step-row-thumb images to open Lightbox on click
+document.querySelectorAll('.screenshot, .step-row-thumb img').forEach(img => {
   img.style.cursor = 'zoom-in'
-  img.addEventListener('click', () => openLightbox(img))
+  img.addEventListener('click', (e) => {
+    e.stopPropagation()
+    openLightbox(img)
+  })
 })

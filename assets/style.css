@@ -650,6 +650,62 @@ strong { color: #f1f5f9; }
 /* ========== Step Blocks ========== */
 .step-block { margin-bottom: 48px; }
 
+/* 折叠块（阅读更多） */
+.collapsible-block {
+  margin-bottom: 48px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.collapsible-block[open] { border-color: rgba(56,189,248,.25); }
+.collapsible-block:hover { border-color: rgba(56,189,248,.2); }
+
+.collapsible-block > summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+  transition: background .2s;
+}
+.collapsible-block > summary::-webkit-details-marker { display: none; }
+.collapsible-block > summary:hover { background: rgba(56,189,248,.04); }
+
+.collapsible-block > summary h3 {
+  font-size: 20px;
+  margin: 0;
+  flex: 1;
+}
+
+.collapsible-block > summary::after {
+  content: '+';
+  font-family: var(--font-code);
+  font-size: 22px;
+  color: var(--accent);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(56,189,248,.3);
+  border-radius: 6px;
+  transition: transform .2s, background .2s;
+  flex-shrink: 0;
+}
+.collapsible-block[open] > summary::after {
+  content: '−';
+  background: var(--accent-glow);
+}
+
+.collapsible-body {
+  padding: 8px 24px 24px;
+  border-top: 1px solid var(--border);
+}
+
 .step-header {
   display: flex;
   align-items: center;
@@ -1149,6 +1205,87 @@ strong { color: #f1f5f9; }
   border-top: 1px solid var(--border);
   background: var(--bg-card-solid);
 }
+
+/* ========== Step Row — compact text + thumbnail layout ========== */
+.step-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  margin-bottom: 10px;
+  transition: border-color .2s;
+}
+.step-row:hover { border-color: rgba(56,189,248,.15); }
+.step-row-text { flex: 1; min-width: 0; }
+.step-row-text p { color: var(--text-dim); font-size: 14px; margin: 0; }
+.step-row-text strong { display: block; margin-bottom: 4px; font-size: 14px; }
+.step-row-thumb {
+  flex-shrink: 0;
+  width: 120px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  cursor: zoom-in;
+  transition: border-color .2s, box-shadow .2s;
+}
+.step-row-thumb:hover {
+  border-color: rgba(56,189,248,.3);
+  box-shadow: 0 2px 12px rgba(0,0,0,.3);
+}
+.step-row-thumb img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ========== Chat History Bubbles (for rendered conversation logs) ========== */
+.chat-turn {
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  margin-bottom: 12px;
+  font-size: 13.5px;
+  line-height: 1.7;
+  position: relative;
+}
+.chat-turn-user {
+  background: rgba(56,189,248,.06);
+  border: 1px solid rgba(56,189,248,.12);
+  border-left: 3px solid var(--accent);
+}
+.chat-turn-ai {
+  background: rgba(129,140,248,.04);
+  border: 1px solid rgba(129,140,248,.08);
+  border-left: 3px solid var(--accent2);
+}
+.chat-turn-label {
+  font-family: var(--font-code);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 8px;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+.chat-turn-user .chat-turn-label {
+  background: rgba(56,189,248,.12);
+  color: var(--accent);
+}
+.chat-turn-ai .chat-turn-label {
+  background: rgba(129,140,248,.12);
+  color: var(--accent2);
+}
+.chat-turn p { margin: 4px 0; }
+.chat-turn code { font-size: 12px; }
+.chat-turn pre { margin: 8px 0; padding: 10px 14px; background: var(--bg-code); border-radius: 6px; overflow-x: auto; }
+.chat-turn hr { border: none; border-top: 1px solid var(--border); margin: 0; display: none; }
+.chat-turn table { font-size: 12.5px; }
+.chat-turn th, .chat-turn td { padding: 4px 10px; border: 1px solid var(--border); }
+.chat-turn th { background: var(--bg-code); }
 
 /* ========== Markdown Body (rendered from marked.js) ========== */
 .markdown-body { padding: 20px 24px; font-size: 14px; line-height: 1.7; max-height: 420px; overflow-y: auto; }

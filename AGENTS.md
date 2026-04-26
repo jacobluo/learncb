@@ -24,10 +24,9 @@ learncb/
     ├── agent.html          # 3.3 配置自定义智能体
     ├── mcp.html            # 3.4 配置 MCP
     ├── rules.html          # 3.5 配置 Rules
-    ├── coding.html         # 四、开始 Coding
+├── planmode.html       # 四、实战案例-PLAN模式
     ├── examples.html       # 五、实战案例
     ├── seckill.html        # 5.1 Java 秒杀 API 服务
-    ├── faq.html            # 六、常见问题
     └── resources.html      # 七、参考资源
 ```
 
@@ -108,6 +107,23 @@ learncb/
 - `.screenshot`：宽度 100%，自适应高度
 - `.screenshot-caption`：底部居中小字说明，深色背景分隔线
 - **Lightbox 行为**：`assets/script.js` 中的 `openLightbox()` 函数自动为所有 `.screenshot` 图片绑定点击事件，弹出半透明遮罩 + 原图居中显示，点击遮罩或按 `Esc` 关闭
+
+#### 紧凑图文行（Step Row）
+- 用于流程演示页面（如实战案例），左侧文字描述 + 右侧 120px 缩略图，点击查看原图
+- 做法：
+  ```html
+  <div class="step-row">
+    <div class="step-row-text">
+      <strong>标题</strong>
+      <p>描述文字</p>
+    </div>
+    <div class="step-row-thumb" onclick="openLightbox(this.querySelector('img'))">
+      <img src="../images/xxx.png" alt="描述">
+    </div>
+  </div>
+  ```
+- `.step-row`：flex 布局、深色卡片背景、hover 边框变亮
+- `.step-row-thumb`：120px 宽缩略图、圆角 6px、`cursor: zoom-in`、点击触发 Lightbox
 
 #### Tab 切换
 - 底部 2px 下划线指示活跃态

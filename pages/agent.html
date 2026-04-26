@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/vitepress-theme.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -27,10 +28,9 @@
     <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
     <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
     <li class="nav-section">实战</li>
-    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
-    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
-    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
-    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+<li><a href="planmode.html" class="nav-link">四、实战案例-PLAN模式</a></li>
+    <li><a href="seckill.html" class="nav-link">五、实战案例-后台开发</a></li>
+    <li><a href="fullstackdev.html" class="nav-link">六、实战案例-全栈开发</a></li>
     <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
   </ul>
 </nav>
@@ -43,7 +43,7 @@
       <div class="step-block">
         <div class="step-header">
           <span class="step-badge">3.3</span>
-          <h3>配置自定义智能体 <span class="time-badge">3-5 分钟</span></h3>
+          <h3>配置自定义智能体 <span class="time-badge">1 分钟</span></h3>
         </div>
 
         <div class="card card-highlight">
@@ -51,38 +51,8 @@
           <p>自定义 Agent 允许你根据特定需求创建个性化的 AI 智能体。你可以为它定义角色、能力范围、可用工具和行为规则，让它成为团队中的"虚拟专家"。</p>
         </div>
 
-        <h4 class="subsection-title">配置步骤</h4>
-        <div class="steps-list">
-          <div class="step-item">
-            <div class="step-num">1</div>
-            <div class="step-content">
-              <strong>进入设置</strong>
-              <p>打开 CodeBuddy 侧边栏 → 点击右上方 <strong>CodeBuddy Settings</strong> 按钮 → 找到 <strong>自定义 Agent</strong> 配置入口</p>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">2</div>
-            <div class="step-content">
-              <strong>填写配置信息</strong>
-              <div class="config-table">
-                <div class="config-row config-header">
-                  <span>配置项</span><span>说明</span><span>示例</span>
-                </div>
-                <div class="config-row">
-                  <span>Agent 名称</span><span>有意义的名称</span><span><code>Go 后端审查官</code></span>
-                </div>
-                <div class="config-row">
-                  <span>System Prompt</span><span>定义角色和行为规则</span><span>见下方示例</span>
-                </div>
-                <div class="config-row">
-                  <span>可用工具</span><span>Agent 可调用的工具集</span><span><code>文件读写、终端、搜索</code></span>
-                </div>
-                <div class="config-row">
-                  <span>上下文范围</span><span>关注的文件/目录</span><span><code>src/、tests/</code></span>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="callout callout-tip">
+          <strong>💡 本案例说明：</strong>CodeBuddy 已内置 <code>Code Explorer</code> 和 <code>Architect Review</code> 两个智能体，开箱即用。<strong>本案例无须继续新增自定义智能体</strong>，直接使用下方内置 Agent 即可完成实战。若想了解如何自建 Agent，请展开下方"阅读更多"。
         </div>
 
         <h4 class="subsection-title">内置 Agent</h4>
@@ -95,7 +65,7 @@
 
         <div class="steps-list">
           <div class="step-item">
-            <div class="step-num" style="background: linear-gradient(135deg, var(--primary), var(--primary-gradient)); color: var(--bg);">1</div>
+            <div class="step-num" style="background: linear-gradient(135deg, var(--accent), #2dd4bf); color: #ffffff; border-color: transparent;">1</div>
             <div class="step-content">
               <strong>Code Explorer — 代码探索智能体</strong>
               <p>核心代码分析助手，专为跨多个文件、目录进行搜索和代码探索而设计。当探索范围过大、无法通过单次读取完成时，应使用该智能体。</p>
@@ -103,7 +73,7 @@
             </div>
           </div>
           <div class="step-item">
-            <div class="step-num" style="background: linear-gradient(135deg, var(--accent), #2dd4bf); color: var(--bg);">2</div>
+            <div class="step-num" style="background: linear-gradient(135deg, var(--accent2), var(--accent4)); color: #ffffff; border-color: transparent;">2</div>
             <div class="step-content">
               <strong>Architect Review — 架构评审智能体</strong>
               <p>资深架构师助手，精通整洁架构、微服务、事件驱动系统和 DDD。可评审系统设计与代码变更的架构合理性、可扩展性和可维护性。</p>
@@ -115,16 +85,61 @@
         <div class="card" style="margin-top: 1.5rem; border-left: 3px solid var(--accent);">
           <p>📌 <strong>小贴士：</strong>在对话面板顶部可以快速切换 Code / Chat 智能体。Code Agent 对应 <strong>Craft 模式</strong>（直接操作代码），Chat Agent 对应 <strong>Ask 模式</strong>（纯对话问答）。自定义 Agent 则可以在此基础上进一步扩展，打造专属的"虚拟专家"。</p>
         </div>
+      </div>
 
-        <h4 class="subsection-title">System Prompt 完整示例</h4>
-        <div class="example-tabs">
-          <div class="tab-header">
-            <button class="tab-btn active" data-tab="agent-go">Go 后端审查</button>
-            <button class="tab-btn" data-tab="agent-react">React 前端专家</button>
-            <button class="tab-btn" data-tab="agent-dba">数据库 DBA</button>
+      <!-- ========== 阅读更多：自定义配置 ========== -->
+      <details class="collapsible-block">
+        <summary>
+          <span class="step-badge">更多</span>
+          <h3>阅读更多：自定义 Agent 配置步骤与完整示例</h3>
+        </summary>
+        <div class="collapsible-body">
+
+          <p style="color: var(--text-dim); margin-bottom: 16px;">如果需要为特定领域/团队规范创建自定义智能体，可按以下步骤配置。本案例中使用内置 Agent 即可，无需执行。</p>
+
+          <h4 class="subsection-title">配置步骤</h4>
+          <div class="steps-list">
+            <div class="step-item">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <strong>进入设置</strong>
+                <p>打开 CodeBuddy 侧边栏 → 点击右上方 CodeBuddy Settings  按钮 → Agent  配置入口</p>
+              </div>
+            </div>
+            <div class="step-item">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <strong>填写配置信息</strong>
+                <div class="config-table">
+                  <div class="config-row config-header">
+                    <span>配置项</span><span>说明</span><span>示例</span>
+                  </div>
+                  <div class="config-row">
+                    <span>Agent 名称</span><span>有意义的名称</span><span><code>Go 后端审查官</code></span>
+                  </div>
+                  <div class="config-row">
+                    <span>System Prompt</span><span>定义角色和行为规则</span><span>见下方示例</span>
+                  </div>
+                  <div class="config-row">
+                    <span>可用工具</span><span>Agent 可调用的工具集</span><span><code>文件读写、终端、搜索</code></span>
+                  </div>
+                  <div class="config-row">
+                    <span>上下文范围</span><span>关注的文件/目录</span><span><code>src/、tests/</code></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="tab-content active" id="agent-go">
-            <div class="code-block markdown-body" data-markdown>
+
+          <h4 class="subsection-title">System Prompt 完整示例</h4>
+          <div class="example-tabs">
+            <div class="tab-header">
+              <button class="tab-btn active" data-tab="agent-go">Go 后端审查</button>
+              <button class="tab-btn" data-tab="agent-react">React 前端专家</button>
+              <button class="tab-btn" data-tab="agent-dba">数据库 DBA</button>
+            </div>
+            <div class="tab-content active" id="agent-go">
+              <div class="code-block markdown-body" data-markdown>
 你是一个专业的后端代码审查助手，专注于 Go 语言项目。
 
 ## 角色定位
@@ -141,10 +156,10 @@
 - 每个问题给出具体代码修改建议
 - 引用 Go 官方文档或 Effective Go 的最佳实践
 - 对于严重问题标注 🔴，建议标注 🟡
+              </div>
             </div>
-          </div>
-          <div class="tab-content" id="agent-react">
-            <div class="code-block markdown-body" data-markdown>
+            <div class="tab-content" id="agent-react">
+              <div class="code-block markdown-body" data-markdown>
 你是一个资深 React/TypeScript 前端开发专家。
 
 ## 角色定位
@@ -168,10 +183,10 @@
 - 先给出简洁方案，再解释原因
 - 附带 TypeScript 类型定义
 - 涉及性能时给出 Before/After 对比
+              </div>
             </div>
-          </div>
-          <div class="tab-content" id="agent-dba">
-            <div class="code-block markdown-body" data-markdown>
+            <div class="tab-content" id="agent-dba">
+              <div class="code-block markdown-body" data-markdown>
 你是一个专业的数据库管理专家（DBA），专注于 MySQL 和 PostgreSQL。
 
 ## 角色定位
@@ -188,10 +203,11 @@
 - 给出 EXPLAIN 分析结果解读
 - 索引建议附带创建语句
 - 评估数据量级影响（万级/百万级/亿级）
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </details>
 
       <div class="page-nav">
         <a href="skills.html" class="page-nav-btn prev">← 上一章：配置 Skills</a>

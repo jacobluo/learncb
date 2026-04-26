@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/vitepress-theme.css">
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
@@ -27,10 +28,9 @@
     <li><a href="mcp.html" class="nav-link">3.4 配置 MCP</a></li>
     <li><a href="rules.html" class="nav-link">3.5 配置 Rules</a></li>
     <li class="nav-section">实战</li>
-    <li><a href="coding.html" class="nav-link">四、开始 Coding</a></li>
-    <li><a href="examples.html" class="nav-link">五、实战案例</a></li>
-    <li><a href="seckill.html" class="nav-link">5.1 Java 秒杀 API</a></li>
-    <li><a href="faq.html" class="nav-link">六、常见问题</a></li>
+<li><a href="planmode.html" class="nav-link">四、实战案例-PLAN模式</a></li>
+    <li><a href="seckill.html" class="nav-link">五、实战案例-后台开发</a></li>
+    <li><a href="fullstackdev.html" class="nav-link">六、实战案例-全栈开发</a></li>
     <li><a href="resources.html" class="nav-link">七、参考资源</a></li>
   </ul>
 </nav>
@@ -54,64 +54,35 @@
         <div class="callout callout-warning">
           <strong>⚠️ 注意：</strong>规则只会添加到每个会话的开始部分，创建或修改规则后需要<strong>新建对话会话</strong>才能生效。
         </div>
+      </div>
 
-        <h4 class="subsection-title">规则层级</h4>
-        <div class="config-table">
-          <div class="config-row config-header">
-            <span>层级</span><span>存储位置</span><span>作用范围</span>
-          </div>
-          <div class="config-row">
-            <span><strong>项目规则</strong></span><span><code>.codebuddy/rules</code></span><span>当前项目 ✅ 可团队共享</span>
-          </div>
-          <div class="config-row">
-            <span><strong>用户规则</strong></span><span>用户目录</span><span>全局跨项目 ❌ 不纳入版本控制</span>
-          </div>
+      <!-- ========== 案例必装：Rule ========== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">必装</span>
+          <h3>案例必装 Rule：JAVA 编码规范</h3>
         </div>
 
-        <h4 class="subsection-title">三种规则类型</h4>
-        <div class="rules-types">
-          <div class="rule-type-card">
-            <div class="rule-type-badge always">Always</div>
-            <h5>总是生效</h5>
-            <p>应用于每个聊天会话，始终加载规则原文</p>
-            <div class="rule-type-use">适合：核心编码规范、架构约束、安全要求</div>
-          </div>
-          <div class="rule-type-card">
-            <div class="rule-type-badge requested">Agent Requested</div>
-            <h5>智能体请求</h5>
-            <p>Agent 根据描述判断相关性后自动应用</p>
-            <div class="rule-type-use">适合：文档、使用指南、参考资料</div>
-          </div>
-          <div class="rule-type-card">
-            <div class="rule-type-badge manual">Manual</div>
-            <h5>手动触发</h5>
-            <p>对话中通过 <code>@规则名</code> 提及时应用</p>
-            <div class="rule-type-use">适合：特定功能指南、可选最佳实践</div>
-          </div>
-        </div>
+        <p>后台开发案例以 Java 为主，需要先配置项目级的 <strong>JAVA 编码规范</strong> Rule，让 AI 生成的代码统一风格、符合团队约束。</p>
 
-        <h4 class="subsection-title">创建项目规则步骤</h4>
         <div class="steps-list">
-          <div class="step-item"><div class="step-num">1</div><div class="step-content"><p>打开 CodeBuddy IDE 设置页</p></div></div>
-          <div class="step-item"><div class="step-num">2</div><div class="step-content"><p>在对话框顶部找到规则 按钮</p></div></div>
-          <div class="step-item"><div class="step-num">3</div><div class="step-content"><p>点击创建规则 → 选择 项目规则</p></div></div>
-          <div class="step-item"><div class="step-num">4</div><div class="step-content"><p>填写规则名称、类型和内容</p></div></div>
-        </div>
-
-        <div class="screenshot-wrapper" style="margin-top: 16px;">
-          <img src="../images/check-rule.png" alt="CodeBuddy 创建项目规则" class="screenshot">
-          <div class="screenshot-caption">在 CodeBuddy 设置中创建和管理项目规则</div>
-        </div>
-
-        <h4 class="subsection-title">完整规则示例</h4>
-        <div class="example-tabs">
-          <div class="tab-header">
-            <button class="tab-btn active" data-tab="rule-code">JAVA编码规范</button>
-            <button class="tab-btn" data-tab="rule-arch">架构约束</button>
-            <button class="tab-btn" data-tab="rule-karpathy">karpathy-guidelines</button>
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>创建规则文件</strong>
+              <p>在项目根目录下创建文件 <code>.codebuddy/rules/java-coding-style.mdc</code>（如目录不存在请先创建）。</p>
+            </div>
           </div>
-          <div class="tab-content active" id="rule-code">
-            <div class="code-block markdown-body" data-markdown>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>粘贴以下内容并保存</strong>
+              <p>文件头部 YAML 的 <code>alwaysApply: true</code> 表示每次对话都会注入此规则；保存后<strong>新建对话会话</strong>即可生效。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-block markdown-body" data-markdown>
 
 # 文件：.codebuddy/rules/java-coding-style.mdc
 
@@ -351,9 +322,76 @@ public protected private abstract static final transient volatile synchronized n
 
 ## 重要提醒
 在编写代码时，请始终牢记：编码规范的目的是提高代码的正确性、可读性、可维护性、可调试性、一致性和美观性。当遇到特殊情况时，应该优先考虑这些原则，而不是盲目遵循规则。
-            </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:20px;">
+          <strong>💡 完成：</strong>JAVA 编码规范 Rule 已就绪。如需了解 Rules 的层级、类型、其它规则示例与最佳实践，请展开下方「阅读更多」。
+        </div>
+      </div>
+
+      <!-- ========== 阅读更多 ========== -->
+      <details class="collapsible-block">
+        <summary>
+          <span class="step-badge">更多</span>
+          <h3>阅读更多：Rules 层级、类型、示例与最佳实践</h3>
+        </summary>
+        <div class="collapsible-body">
+
+        <h4 class="subsection-title">规则层级</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>层级</span><span>存储位置</span><span>作用范围</span>
           </div>
-          <div class="tab-content" id="rule-arch">
+          <div class="config-row">
+            <span><strong>项目规则</strong></span><span><code>.codebuddy/rules</code></span><span>当前项目 ✅ 可团队共享</span>
+          </div>
+          <div class="config-row">
+            <span><strong>用户规则</strong></span><span>用户目录</span><span>全局跨项目 ❌ 不纳入版本控制</span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">三种规则类型</h4>
+        <div class="rules-types">
+          <div class="rule-type-card">
+            <div class="rule-type-badge always">Always</div>
+            <h5>总是生效</h5>
+            <p>应用于每个聊天会话，始终加载规则原文</p>
+            <div class="rule-type-use">适合：核心编码规范、架构约束、安全要求</div>
+          </div>
+          <div class="rule-type-card">
+            <div class="rule-type-badge requested">Agent Requested</div>
+            <h5>智能体请求</h5>
+            <p>Agent 根据描述判断相关性后自动应用</p>
+            <div class="rule-type-use">适合：文档、使用指南、参考资料</div>
+          </div>
+          <div class="rule-type-card">
+            <div class="rule-type-badge manual">Manual</div>
+            <h5>手动触发</h5>
+            <p>对话中通过 <code>@规则名</code> 提及时应用</p>
+            <div class="rule-type-use">适合：特定功能指南、可选最佳实践</div>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">创建项目规则步骤</h4>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-content"><p>打开 CodeBuddy IDE 设置页</p></div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-content"><p>在对话框顶部找到规则 按钮</p></div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-content"><p>点击创建规则 → 选择 项目规则</p></div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-content"><p>填写规则名称、类型和内容</p></div></div>
+        </div>
+
+        <div class="screenshot-wrapper" style="margin-top: 16px;">
+          <img src="../images/check-rule.png" alt="CodeBuddy 创建项目规则" class="screenshot">
+          <div class="screenshot-caption">在 CodeBuddy 设置中创建和管理项目规则</div>
+        </div>
+
+        <h4 class="subsection-title">其他规则示例</h4>
+        <div class="example-tabs">
+          <div class="tab-header">
+            <button class="tab-btn active" data-tab="rule-arch">架构约束</button>
+            <button class="tab-btn" data-tab="rule-karpathy">karpathy-guidelines</button>
+          </div>
+          <div class="tab-content active" id="rule-arch">
             <div class="code-block markdown-body" data-markdown>
 ```yaml
 ---
@@ -382,7 +420,7 @@ src/
 ```
             </div>
           </div>
-                    <div class="tab-content" id="rule-karpathy">
+          <div class="tab-content" id="rule-karpathy">
             <div class="code-block markdown-body" data-markdown>
 ```yaml
 ---
@@ -407,15 +445,15 @@ provider:
 2. 简约至上 (Simplicity First)
 用最少的代码解决问题。
 拒绝投机： 不写推测性的代码，不添加需求之外的功能。
-拒绝过度设计： 不为仅使用一次的代码做抽象；不添加未经要求的“灵活性”或“可配置性”。
+拒绝过度设计： 不为仅使用一次的代码做抽象；不添加未经要求的"灵活性"或"可配置性"。
 拒绝处理不可能的场景： 不为不会发生的场景编写错误处理逻辑。
 精简代码： 如果 50 行就能搞定却写了 200 行，请重写。
-自我审视： 问自己：“资深工程师会觉得这太复杂了吗？” 如果是，请简化。
+自我审视： 问自己："资深工程师会觉得这太复杂了吗？" 如果是，请简化。
 
 3. 精准改动 (Surgical Changes)
-只动必须动的地方。只清理你产生的“垃圾”。
+只动必须动的地方。只清理你产生的"垃圾"。
 在修改现有代码时：
-保持边界： 不要试图“改进”周边的代码、注释或格式。
+保持边界： 不要试图"改进"周边的代码、注释或格式。
 不修不坏： 不要重构没有问题的代码。
 风格对齐： 即使你有更好的习惯，也要匹配现有的代码风格。
 仅做提醒： 发现无关的死代码时，提出来，但不要直接删除。
@@ -425,16 +463,15 @@ provider:
 4. 目标驱动执行 (Goal-Driven Execution)
 定义成功标准，循环执行直至验证通过。
 将任务转化为可验证的目标：
-“增加校验” → “为非法输入编写测试，然后使其通过”。
-“修复 Bug” → “编写能复现问题的测试，然后使其通过”。
-“重构 X” → “确保重构前后的测试都能通过”。
+"增加校验" → "为非法输入编写测试，然后使其通过"。
+"修复 Bug" → "编写能复现问题的测试，然后使其通过"。
+"重构 X" → "确保重构前后的测试都能通过"。
 对于多步骤任务，简要陈述计划：
 [步骤] → 验证：[检查项]
 [步骤] → 验证：[检查项]
 
             </div>
           </div>
-
         </div>
 
         <h4 class="subsection-title">CODEBUDDY.md — 轻量替代方案</h4>
@@ -454,11 +491,13 @@ provider:
           <div class="bp-item"><span class="bp-icon">📝</span><div><strong>提供示例</strong><p>给出具体示例或参考文件路径</p></div></div>
           <div class="bp-item"><span class="bp-icon">🎯</span><div><strong>合理分配</strong><p>核心规范设为 always（3-5 个），其他设为 manual 或 requested</p></div></div>
         </div>
-      </div>
+
+        </div>
+      </details>
 
       <div class="page-nav">
         <a href="mcp.html" class="page-nav-btn prev">← 上一章：配置 MCP</a>
-        <a href="coding.html" class="page-nav-btn next">下一章：开始 Coding →</a>
+<a href="planmode.html" class="page-nav-btn next">下一章：实战案例-PLAN模式 →</a>
       </div>
     </div>
   </section>
