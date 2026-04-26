@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>实战：多 Agent 协作开发工厂 - CodeBuddy 操作手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/style.css">
+<link rel="stylesheet" href="../assets/vitepress-theme.css">
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header"><div class="logo"><span class="logo-icon">CB</span><span class="logo-text">操作手册</span></div><button class="sidebar-toggle" id="sidebarClose">&times;</button></div>
+  <ul class="nav-list">
+    <li class="nav-section">开始</li>
+    <li><a href="../index.html" class="nav-link">一、简介</a></li>
+    <li><a href="about.html" class="nav-link">二、CodeBuddy 介绍</a></li>
+    <li class="nav-section">准备工作</li>
+    <li><a href="install.html" class="nav-link">三-1 下载/安装</a></li>
+    <li><a href="skills.html" class="nav-link">三-2 配置 Skills</a></li>
+    <li><a href="agent.html" class="nav-link">三-3 配置自定义智能体</a></li>
+    <li><a href="mcp.html" class="nav-link">三-4 配置 MCP</a></li>
+    <li><a href="rules.html" class="nav-link">三-5 配置 Rules</a></li>
+    <li class="nav-section">实战</li>
+    <li><a href="planmode.html" class="nav-link">四、实战案例-Plan 模式</a></li>
+    <li><a href="seckill.html" class="nav-link">五、实战案例-后台开发</a></li>
+    <li><a href="fullstackdev.html" class="nav-link">六、实战案例-全栈开发</a></li>
+    <li><a href="multiagent.html" class="nav-link active">七、实战案例-多 Agent 协作</a></li>
+    <li><a href="resources.html" class="nav-link">八、更多阅读</a></li>
+  </ul>
+</nav>
+
+<button class="menu-btn" id="menuBtn">☰</button>
+
+<main class="main-content">
+  <section class="section section-dark">
+    <div class="section-inner">
+
+      <!-- ===== 背景介绍 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">七</span>
+          <h3>实战：多 Agent 协作开发工厂（issue → 编码 → 审查 → 部署 → 测试 闭环）</h3>
+        </div>
+
+        <div class="card card-highlight">
+          <h4>项目背景</h4>
+          <p>本案例展示基于 CodeBuddy 平台的 <strong>AI 多 Agent 协作开发工厂</strong>，实现了 <code>issue → 编码 → 审查 → 部署 → 测试</code> 的完整闭环。由 1 个 main agent 负责调度，5 个子 Agent 各司其职，外加 1 个常驻横向监督 Agent，全部以 <strong>CNB Issue 作为唯一事实来源</strong>协作推进。</p>
+          <p style="margin-top:8px;">代码仓库：<a href="https://cnb.cool/carlffeng/agentteamdemo_drawio" target="_blank">https://cnb.cool/carlffeng/agentteamdemo_drawio</a></p>
+          <div class="mcp-features" style="margin-top:12px;">
+            <span class="mcp-tag">Main Agent 调度</span>
+            <span class="mcp-tag">Coding Agent</span>
+            <span class="mcp-tag">Review Agent</span>
+            <span class="mcp-tag">Deploy Agent</span>
+            <span class="mcp-tag">Test Agent</span>
+            <span class="mcp-tag">Improvement Agent</span>
+            <span class="mcp-tag">CNB Issue 驱动</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 架构图 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">架构</span>
+          <h3>5 子 Agent 协作流</h3>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>用户 → main agent（管理者，只调度）→ 5 个子 Agent</strong>
+            <p>用户通过 CNB Issue 下达需求，<code>main agent</code> 作为管理者只做调度、不写业务代码；<code>coding-agent</code> 负责编码实现，<code>review-agent</code> 做安全 + 规范 + 架构审查，<code>deploy-agent</code> 跑部署流水线，<code>test-agent</code> 跑测试验证。<code>improvement-agent</code> 作为常驻横向监督 Agent，持续观察所有 Agent 的运行状态，每 2 小时汇报一次改进建议。所有协作过程都以 <strong>CNB Issue</strong> 为唯一事实来源，状态、评论、上下文都落到 Issue。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/multi-agents/1-multiagent.png" alt="多 Agent 协作架构图">
+          </div>
+        </div>
+
+        <div class="code-block" style="margin-top:16px;">
+<pre style="margin:0;white-space:pre;"><code>用户 → main agent（管理者，只调度）
+         │
+         ├──► coding-agent   → 编码实现
+         ├──► review-agent   → 代码审查
+         ├──► deploy-agent   → 部署流水线
+         ├──► test-agent     → 测试验证
+         │
+         └──► improvement-agent（常驻横向监督）
+                  ↑
+              CNB Issue（唯一事实来源）</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== 演示视频 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">演示</span>
+          <h3>端到端协作演示视频</h3>
+        </div>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 12px;">以下视频完整记录了多 Agent 协作从 Issue 创建到部署上线的全过程。</p>
+        <div class="video-wrapper" style="border-radius: 12px; overflow: hidden; background: #000;">
+          <video controls preload="metadata" style="width: 100%; display: block;" poster="../images/multi-agents/1-multiagent.png">
+            <source src="../images/multi-agents/2-multiagent-video.mp4" type="video/mp4">
+            您的浏览器不支持 HTML5 video 标签，请<a href="../images/multi-agents/2-multiagent-video.mp4">点击下载视频</a>观看。
+          </video>
+        </div>
+      </div>
+
+      <!-- ===== .codebuddy 内部结构 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">结构</span>
+          <h3>.codebuddy/ 内部结构</h3>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>Agent / Team / Skill / Improvement / Rules 分层组织</strong>
+            <p>项目以 <code>.codebuddy/</code> 目录承载所有 Agent 协作资产：5 个 Agent 模板各自定义职责与触发条件；<code>teams/dev-factory/</code> 管理运行时配置和各 Agent 的消息队列；13 个 Skill 封装 CNB API、流水线、Review、PR 等通用能力；<code>improvement/</code> 沉淀改进日志、提案和卡住日志；<code>rules/</code> 提供非强制的工程建议索引。</p>
+          </div>
+        </div>
+
+        <div class="code-block" style="margin-top:12px;">
+<pre style="margin:0;white-space:pre;"><code>.codebuddy/
+├── agents/          # 5 个 Agent 模板
+│   ├── coding-agent.md       # 每 30 分钟拉 issue → 独立分支编码
+│   ├── review-agent.md       # 安全 + 规范 + 架构审查
+│   ├── deploy-agent.md       # 测试/生产环境部署（生产需用户批准）
+│   ├── test-agent.md         # 单测 + 集成测试 + 回归
+│   └── improvement-agent.md  # 常驻监督，每 2 小时汇报
+├── teams/dev-factory/
+│   ├── config.json           # 运行时配置（6 成员）
+│   └── inboxes/*.json        # 各 agent 消息队列状态
+├── skills/          # 13 个 Skill（cnb-api/pipeline/review/pr 等）
+├── improvement/     # 改进日志(60KB) + 提案 + 卡住日志
+└── rules/README.md  # 非强制建议索引</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== 角色职责 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">角色</span>
+          <h3>各 Agent 的职责与协作边界</h3>
+        </div>
+
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>Agent</span><span>职责</span><span>触发方式</span>
+          </div>
+          <div class="config-row"><span><code>main-agent</code></span><span>管理者，只做调度，不写业务代码</span><span>用户 Issue 入口</span></div>
+          <div class="config-row"><span><code>coding-agent</code></span><span>拉取 Issue，独立分支编码实现</span><span>每 30 分钟轮询</span></div>
+          <div class="config-row"><span><code>review-agent</code></span><span>安全 + 规范 + 架构审查</span><span>coding 产出 PR 后</span></div>
+          <div class="config-row"><span><code>deploy-agent</code></span><span>测试环境自动部署；生产环境需用户批准</span><span>review 通过后</span></div>
+          <div class="config-row"><span><code>test-agent</code></span><span>单元测试 + 集成测试 + 回归</span><span>部署完成后</span></div>
+          <div class="config-row"><span><code>improvement-agent</code></span><span>常驻横向监督，分析卡住日志并给出改进建议</span><span>每 2 小时汇报</span></div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:20px;">
+          <strong>💡 关键设计：</strong>以 <strong>CNB Issue 为唯一事实来源</strong>——所有 Agent 的输入输出、状态扭转、上下文都通过 Issue 评论持久化。任何 Agent 重启或换人介入都能无损恢复；<code>main-agent</code> 只调度不实现，避免中心化瓶颈；<code>improvement-agent</code> 横向监督，让系统具备自我改进能力。
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:16px;">
+          <strong>⚠️ 生产部署需人工批准</strong>：<code>deploy-agent</code> 对测试环境自动部署，但对生产环境强制走用户批准流程——AI 自动化的同时保留人对关键动作的最终决策权。
+        </div>
+      </div>
+
+      <div class="page-nav">
+        <a href="fullstackdev.html" class="page-nav-btn prev">← 上一章：实战案例-全栈开发</a>
+        <a href="resources.html" class="page-nav-btn next">下一章：更多阅读 →</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer"><p>CodeBuddy 操作手册 · 腾讯云代码助手</p></footer>
+</main>
+
+<script src="../assets/script.js"></script>
+</body>
+</html>

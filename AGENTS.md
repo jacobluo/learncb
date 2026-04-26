@@ -27,7 +27,9 @@ learncb/
 ├── planmode.html       # 四、实战案例-Plan 模式
     ├── examples.html       # 五、实战案例
     ├── seckill.html        # 5.1 Java 秒杀 API 服务
-└── resources.html      # 七、更多阅读
+    ├── fullstackdev.html   # 六、实战案例-全栈开发
+    ├── multiagent.html     # 七、实战案例-多 Agent 协作
+└── resources.html      # 八、更多阅读
 ```
 
 ## 设计要求
