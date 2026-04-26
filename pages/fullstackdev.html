@@ -3,11 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>实战案例-全栈开发 - CodeBuddy 操作手册</title>
+<title>实战：Mini CRM 全栈开发 - CodeBuddy 操作手册</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="../assets/vitepress-theme.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
 
@@ -36,15 +37,387 @@
 <main class="main-content">
   <section class="section section-dark">
     <div class="section-inner">
+
+      <!-- ===== 背景介绍 ===== -->
       <div class="step-block">
         <div class="step-header">
           <span class="step-badge">六</span>
-          <h3>实战案例-全栈开发 <span class="time-badge">敬请期待</span></h3>
+          <h3>实战：Pencil + OpenSpec + Superpowers 全栈开发 Mini CRM</h3>
         </div>
 
         <div class="card card-highlight">
-          <h4>即将推出</h4>
-          <p>全栈开发实战案例正在筹备中，将展示使用 CodeBuddy 从前端到后端的完整开发流程。</p>
+          <h4>项目背景</h4>
+          <p>本案例完整记录了使用 CodeBuddy 从零开发一个 Mini CRM 系统的全过程：<strong>先用 Pencil MCP 画原型图，再用 OpenSpec 驱动前后端开发</strong>。项目包含登录认证 + 客户 CRUD 两个核心模块，前端用 Vue 3 + TDesign、后端用 Express + Prisma + MySQL，并通过 Playwright E2E 测试验证。开发过程展示了「设计 → 规范 → 实现 → 对齐 → 验证」的完整闭环。</p>
+          <p style="margin-top:8px;">代码仓库：<a href="https://cnb.cool/relaxorg/demo-mini-crm" target="_blank">https://cnb.cool/relaxorg/demo-mini-crm</a></p>
+          <div class="mcp-features" style="margin-top:12px;">
+            <span class="mcp-tag">Vue 3</span>
+            <span class="mcp-tag">TDesign</span>
+            <span class="mcp-tag">Express</span>
+            <span class="mcp-tag">Prisma</span>
+            <span class="mcp-tag">MySQL</span>
+            <span class="mcp-tag">JWT</span>
+            <span class="mcp-tag">Playwright E2E</span>
+            <span class="mcp-tag">Docker Compose</span>
+          </div>
+        </div>
+
+        <h4 class="subsection-title">前置准备：MCP + Skills + Rules</h4>
+        <p>本案例综合使用了 MCP、Skills、Rules 三类能力，提前配置好（参考 <a href="mcp.html">3.4 配置 MCP</a>、<a href="skills.html">3.2 配置 Skills</a> 和 <a href="rules.html">3.5 配置 Rules</a>）：</p>
+
+        <div class="config-table" style="margin-top:12px;">
+          <div class="config-row config-header">
+            <span>类型</span><span>名称</span><span>说明</span>
+          </div>
+          <div class="config-row"><span>MCP</span><span><code>Pencil</code></span><span>画板/原型设计 MCP，在 CodeBuddy 中直接绘制登录页、客户管理页的交互原型</span></div>
+          <div class="config-row"><span>Skill</span><span><code>OpenSpec</code></span><span>规范驱动开发框架，提供 explore → propose → apply → archive 全流程</span></div>
+          <div class="config-row"><span>Skill</span><span><code>Superpowers</code></span><span>工程方法论技能包，提供 brainstorming、writing-plans、test-driven-dev、code-review 等</span></div>
+          <div class="config-row"><span>Skill</span><span><code>frontend-design</code></span><span>前端设计技能，保证视觉风格与组件一致性</span></div>
+          <div class="config-row"><span>Rule</span><span><code>karpathy-guidelines</code></span><span>Karpathy 风格编程准则（简洁、可读、避免过度抽象），设为 Always 生效</span></div>
+        </div>
+
+        <h4 class="subsection-title">AGENTS.md — 项目规范</h4>
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>在 AGENTS.md 中沉淀项目约定</strong>
+            <p>项目根目录的 <code>AGENTS.md</code> 定义了技术栈（Vue 3 + TDesign、Express + Prisma + MySQL）、开发流程（OpenSpec 三段 + Superpowers 纪律）、TDD / Git Worktree / E2E 测试要求。需求探索阶段确认的所有技术决策都会自动沉淀到这里，作为后续每次对话的上下文。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 阶段一：Pencil 原型设计 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">阶段一</span>
+          <h3>原型设计（Pencil MCP）</h3>
+        </div>
+
+        <div class="chat-demo" style="margin: 0 0 16px;">
+          <div class="chat-bubble user">使用 pencil mcp 设计一个 mini crm 系统，包括登录页面、客户信息管理页面</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>用 Pencil MCP 画交互原型</strong>
+            <p>CodeBuddy 通过 Pencil MCP 直接在画布上绘制两个页面：<strong>登录页</strong>（左侧品牌区 + 右侧表单，含用户名/密码/记住我/忘记密码/登录按钮）、<strong>客户管理页</strong>（侧边栏导航 + 统计卡片 + 搜索/筛选 + 客户表格 + 分页）。原型包含布局、字段、交互状态，是后续实现的视觉基准。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/1-pencil-make-prototype.png" alt="Pencil 原型设计">
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:12px;">
+          <strong>💡 为什么先画原型？</strong>Pencil 原型一方面把「我想要什么」从脑子里掏出来、避免需求反复；另一方面是后续 OpenSpec explore 阶段的输入素材，AI 能直接参考布局和字段做技术方案推导。
+        </div>
+      </div>
+
+      <!-- ===== 阶段二：需求探索 + 骨架提案 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">阶段二</span>
+          <h3>需求探索 + 项目骨架提案</h3>
+        </div>
+
+        <div class="chat-demo" style="margin: 0 0 16px;">
+          <div class="chat-bubble user">@command://openspec-explore 做一个最小化的 CRM 系统，包括登录页面、客户管理页面，其他功能后续再加</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>逐项确认技术栈与 MVP 边界</strong>
+            <p>AI 主导需求探索，逐项提问 + 给出 A/B 选项：前端 Vue 3 + TDesign、后端 Express + TypeScript + Prisma、数据库 MySQL（Docker）、认证 JWT、客户状态三态（活跃/待跟进/流失）、搜索放后端、统计卡片暂不纳入 MVP。所有决策自动沉淀到 <code>openspec/config.yaml</code> 与 AGENTS.md。</p>
+          </div>
+        </div>
+
+        <h4 style="font-size:15px; margin: 24px 0 12px; color: var(--text);">MVP 技术决策汇总</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>决策项</span><span>选择</span><span>说明</span>
+          </div>
+          <div class="config-row"><span>前端框架</span><span>Vue 3</span><span>组合 API + &lt;script setup&gt;</span></div>
+          <div class="config-row"><span>UI 组件库</span><span>TDesign Vue Next</span><span>企业级 CRM 风格匹配</span></div>
+          <div class="config-row"><span>后端框架</span><span>Express</span><span>TypeScript，最简直接</span></div>
+          <div class="config-row"><span>ORM</span><span>Prisma</span><span>Schema-first + 类型安全</span></div>
+          <div class="config-row"><span>数据库</span><span>MySQL 8</span><span>Docker 容器（端口 3307 避冲突）</span></div>
+          <div class="config-row"><span>认证</span><span>JWT</span><span>登录 + 登出 + 受保护路由</span></div>
+          <div class="config-row"><span>客户状态</span><span>三态枚举</span><span>active / pending / churned</span></div>
+          <div class="config-row"><span>搜索</span><span>后端</span><span>按关键字 + 状态筛选分页</span></div>
+          <div class="config-row"><span>E2E 测试</span><span>Playwright</span><span>AGENTS.md 明确要求</span></div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">@command://openspec-propose 搭建项目基础框架</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>propose — 骨架变更提案</strong>
+            <p>自动生成 proposal + design + specs + tasks：monorepo 目录结构（client / server / e2e）、Prisma Schema、Express 基础中间件、Vue 项目初始化、TDesign 集成、CI 配置。人工 Review 后执行。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/2-pharse1-setup-project-propose.png" alt="Propose 骨架">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>apply — 自动搭建骨架</strong>
+            <p>按 tasks.md 顺序创建前后端工程、Prisma Schema、Docker Compose（MySQL 3307）、ESLint/Prettier、Git 配置。遇到 3306 端口被占用自动调整为 3307。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/3-pharse1-setup-project-apply.png.png" alt="Apply 骨架">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>骨架搭建完成</strong>
+            <p>前端 Vue 3 + TDesign 启动页面、后端 Express 健康检查、Prisma migrate 成功、Docker Compose 一键起库。后续归档并推送到 <code>cnb.cool/relaxorg/demo-mini-crm</code>。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/4-pharse1-setup-project-apply-finish.png" alt="骨架完成">
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 阶段三：登录功能 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">阶段三</span>
+          <h3>登录功能实现（TDD + Code Review）</h3>
+        </div>
+
+        <div class="chat-demo" style="margin: 0 0 16px;">
+          <div class="chat-bubble user">@command://opsx:propose 实现登录功能</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>propose — 登录变更提案</strong>
+            <p>生成 <code>implement-login</code> 变更：涵盖 POST /api/auth/login、GET /api/auth/me、auth 中间件、登录页表单、登出按钮、错误处理。Scope 选择 A + 登出按钮。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/5-pharse2-implement-login-propose.png" alt="登录提案">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>提案完成 — 15 个任务 / 4 个 spec</strong>
+            <p>auth-middleware、auth-login、auth-me、login-ui、logout-ui、e2e-scenarios 全量产出，共 15 个任务（含 9 个单元测试 + 5 个 E2E 场景）。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/6-pharse2-implement-login-propose-finish.png" alt="登录提案完成">
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">@command://opsx:apply</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>apply — Git Worktree 隔离 + TDD</strong>
+            <p>通过 <code>using-git-worktrees</code> 在 <code>.worktrees/implement-login</code> 中隔离开发。RED：先写 9 个测试（4 登录 + 4 /me + 1 中间件），全部失败。GREEN：实现 bcrypt + JWT 签发、auth 中间件、LoginView 表单校验。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/7-pharse2-implement-login-propose-apply.png" alt="登录 Apply">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>实施完成 — 9/9 单元测试 + 5/5 E2E 通过</strong>
+            <p>登录 API 完整可用、前端表单接入真实接口、DefaultLayout 动态用户名 + 登出按钮、路由守卫跳转 /login。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/8-pharse2-implement-login-propose-finish.png" alt="登录完成">
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">进行代码评审</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>code-reviewer — 人工请 AI 做代码评审</strong>
+            <p>Superpowers 的 <code>code-reviewer</code> 技能对新增代码做 PR-style Review，指出：错误消息一致性（不泄露用户是否存在）、JWT payload 加 role 字段、auth 中间件错误状态码对齐 spec。修复后再跑一次全量测试，全绿。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/9-pharse2-implement-login-propose-codereview.png" alt="Code Review">
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:12px;">
+          <strong>💡 Superpowers 纪律发挥作用</strong>：<code>verification-before-completion</code> 强制 AI 在声称「完成」前跑一次全测试；<code>code-reviewer</code> 让 AI 自我 PR review，避免人肉漏看。
+        </div>
+      </div>
+
+      <!-- ===== 阶段四：按设计稿对齐 UI ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">阶段四</span>
+          <h3>按 Pencil 设计稿对齐 UI</h3>
+        </div>
+
+        <div class="chat-demo" style="margin: 0 0 16px;">
+          <div class="chat-bubble user">可以登录了，但登录界面 / 登录后的界面没有按照 Pencil 设计稿来，这是什么原因？</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>识别问题：生成的 UI 是 TDesign 默认风格</strong>
+            <p>AI 分析原因：前一阶段 apply 只实现了「功能」，没有参考 <code>mini-crm.pen</code> 的视觉设计。登录页缺少左侧品牌面板、客户管理页缺少侧边栏导航。解决方案：启动新的 change proposal，专门做「按设计稿对齐 UI」。</p>
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">@command://openspec-propose 按照设计稿重新实现页面</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>propose — 基于 Pencil 原型重写 UI</strong>
+            <p>调用 <code>frontend-design</code> Skill，以 <code>mini-crm.pen</code> 为视觉基准生成 <code>align-ui-to-design</code> 变更：LoginView 重写成左右分栏、DefaultLayout 加侧边栏导航、CustomersView 加统计卡片占位。Apply 后前端视觉与设计稿完全对齐。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/10-pharse3-align-ui-to-design-propose-ui.png" alt="对齐设计稿">
+          </div>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:12px;">
+          <strong>⚠️ 经验教训</strong>：功能实现和视觉设计最好放在同一个 propose 里、或在 AGENTS.md 里明确"所有页面必须参考 <code>*.pen</code>"。否则 AI 只会按 UI 库默认风格写，后续要重新对齐设计稿，相当于做两遍。
+        </div>
+      </div>
+
+      <!-- ===== 阶段五：客户管理 CRUD ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">阶段五</span>
+          <h3>客户管理 CRUD + E2E 测试</h3>
+        </div>
+
+        <div class="chat-demo" style="margin: 0 0 16px;">
+          <div class="chat-bubble user">@command://openspec-propose 实现客户管理功能</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>propose — 客户 CRUD 提案</strong>
+            <p>生成 <code>implement-customer-crud</code>：列表（分页 + 关键字搜索 + 状态筛选）、详情、新增/编辑弹窗、删除确认。后端 Prisma CRUD API + 后端搜索分页；前端移除 mock 数据、对接真实后端。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/11-pharse4-implement-customer-crud-propose.png" alt="CRUD 提案">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>人工 Review 提案后确认</strong>
+            <p>Review proposal.md / tasks.md，确认 scope、字段、状态枚举符合第一阶段探索决策。Spec 描述行为（GIVEN/WHEN/THEN），不描述实现细节。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/12-pharse4-implement-customer-crud-propose-confirm.png" alt="提案确认">
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">@command://opsx:apply</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>apply — 实现 CRUD 全链路</strong>
+            <p>后端：<code>GET /api/customers</code>（分页 + 搜索 + 筛选）、<code>POST/PUT/DELETE</code>、字段校验。前端：CustomersView 接入真实 API、新增/编辑弹窗、删除确认框。关键修复：<code>DefaultLayout.vue</code> 的 <code>&lt;slot /&gt;</code> 改为 <code>&lt;router-view /&gt;</code>（子路由组件无法渲染的根因）。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/13-pharse4-implement-customer-crud-propose-apply.png" alt="CRUD 实施">
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">端到端测试做了吗？补充 customers 页面的 e2e 用例</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>补充 9 个 E2E 场景</strong>
+            <p>Playwright 覆盖：列表加载、搜索、状态筛选、分页、新增弹窗、提交新客户、编辑预填、删除触发请求、分页禁用上一页。将登录限流 5 放宽到 100 以支持 E2E 串行多登录。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/14-pharse4-implement-customer-crud-propose-add-e2e.png" alt="E2E 用例">
+          </div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>E2E 全部通过</strong>
+            <p>9 个 customers 场景 + 5 个 login 场景全绿，确认 CRUD 功能端到端可用。测试选择器适配 TDesign 组件（<code>t-button--theme-primary</code>、heading role 等）。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/15-pharse4-implement-customer-crud-propose-e2e-test-finish.png" alt="E2E 通过">
+          </div>
+        </div>
+
+        <div class="chat-demo" style="margin: 16px 0;">
+          <div class="chat-bubble user">@command://opsx:archive</div>
+        </div>
+
+        <div class="step-row">
+          <div class="step-row-text">
+            <strong>归档 + finishing-a-development-branch</strong>
+            <p>归档 change、合并 feature 分支到 master（<code>be9ae3d</code> fast-forward，6 files +317/-49）、清理 worktree、删除 feature 分支。Git 历史清晰可追溯。</p>
+          </div>
+          <div class="step-row-thumb">
+            <img src="../images/mini-crm-demo/16-pharse4-implement-customer-crud-propose-finish.png" alt="归档完成">
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== 流程总结 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">总结</span>
+          <h3>完整开发流程回顾</h3>
+        </div>
+
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>阶段</span><span>命令 / Skill</span><span>产出</span>
+          </div>
+          <div class="config-row"><span>原型设计</span><span>Pencil MCP</span><span>mini-crm.pen：登录页 + 客户管理页</span></div>
+          <div class="config-row"><span>需求探索</span><span><code>/opsx:explore</code></span><span>技术栈 + MVP 边界 + 数据模型决策</span></div>
+          <div class="config-row"><span>骨架提案</span><span><code>/opsx:propose</code></span><span>setup-project：前后端工程 + Docker + Prisma</span></div>
+          <div class="config-row"><span>骨架实施</span><span><code>/opsx:apply</code></span><span>Vue 3 + Express + MySQL 一键启动</span></div>
+          <div class="config-row"><span>登录提案</span><span><code>/opsx:propose</code></span><span>implement-login：15 任务 / 4 spec</span></div>
+          <div class="config-row"><span>登录实施</span><span><code>/opsx:apply</code> (TDD)</span><span>9/9 单元测试 + 5/5 E2E 通过</span></div>
+          <div class="config-row"><span>代码评审</span><span><code>code-reviewer</code></span><span>对齐错误消息 + JWT role 字段</span></div>
+          <div class="config-row"><span>UI 对齐</span><span><code>frontend-design</code></span><span>align-ui-to-design：按 Pencil 稿重写布局</span></div>
+          <div class="config-row"><span>CRUD 提案</span><span><code>/opsx:propose</code></span><span>implement-customer-crud：14 任务</span></div>
+          <div class="config-row"><span>CRUD 实施</span><span><code>/opsx:apply</code></span><span>后端 Prisma CRUD + 前端对接</span></div>
+          <div class="config-row"><span>E2E 测试</span><span>Playwright</span><span>9 个 customers 场景全通过</span></div>
+          <div class="config-row"><span>归档收尾</span><span><code>/opsx:archive</code> + <code>finishing-a-development-branch</code></span><span>合并 master + 清理 worktree</span></div>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:20px;">
+          <strong>⚠️ 关键点：propose 后必须人工 Review</strong><br>
+          <code>/opsx:propose</code> 生成的 <code>proposal.md</code>、<code>design.md</code>、<code>specs/</code>、<code>tasks.md</code> 都是 AI 草案，在执行 <code>/opsx:apply</code> 之前必须由开发者人工审阅。本案例的阶段二、阶段三、阶段五都在 propose 完成后先人工 Review，再进入 apply——确认 scope 没有偏差、字段和状态枚举符合决策、任务顺序合理。如果发现问题，直接修改这些文件再执行 apply。<strong>AI 生成的规范是起点，不是终点——人始终掌握最终决策权。</strong>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:20px;">
+          <strong>💡 关键收获：</strong>Pencil MCP 把「设计」拉到 AI 可操作的上下文里；OpenSpec 的「explore → propose → apply → archive」循环把规范和实现绑在一起；Superpowers 的 <code>using-git-worktrees</code> + <code>test-driven-development</code> + <code>code-reviewer</code> + <code>verification-before-completion</code> 形成完整的工程化纪律。四者组合，让「从画原型到代码上线」全程可追溯、可验证、可回退。
+        </div>
+      </div>
+
+      <!-- ===== 完整对话记录 ===== -->
+      <div class="step-block">
+        <div class="step-header">
+          <span class="step-badge">附录</span>
+          <h3>完整对话记录</h3>
+        </div>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 12px;">以下是本案例与 CodeBuddy 的完整对话记录（已精简工具调用和元数据），可滚动查看。</p>
+        <div class="code-block markdown-body" id="chat-history" style="max-height: 600px; overflow-y: auto;">
+          <p style="color: var(--text-muted);">加载中...</p>
         </div>
       </div>
 
@@ -59,5 +432,53 @@
 </main>
 
 <script src="../assets/script.js"></script>
+<script>
+// Load and render chat history with styled turns
+fetch('../data/fullstack-chat-history-clean.md')
+  .then(r => r.text())
+  .then(md => {
+    const el = document.getElementById('chat-history')
+    if (!el || typeof marked === 'undefined') return
+
+    // Split by --- separator into blocks
+    const blocks = md.split(/\n---\n/)
+    let html = ''
+
+    blocks.forEach(block => {
+      const trimmed = block.trim()
+      if (!trimmed) return
+
+      if (trimmed.startsWith('**User**')) {
+        const content = trimmed.replace(/^\*\*User\*\*\s*/, '').trim()
+        if (!content) return
+        html += '<div class="chat-turn chat-turn-user">'
+        html += '<span class="chat-turn-label">User</span>'
+        html += marked.parse(content)
+        html += '</div>'
+      } else if (trimmed.startsWith('**CodeBuddy**')) {
+        const content = trimmed.replace(/^\*\*CodeBuddy\*\*\s*/, '').trim()
+        if (!content) return
+        html += '<div class="chat-turn chat-turn-ai">'
+        html += '<span class="chat-turn-label">CodeBuddy</span>'
+        html += marked.parse(content)
+        html += '</div>'
+      } else if (trimmed.startsWith('# ')) {
+        // Title block
+        html += marked.parse(trimmed)
+      } else {
+        // Continuation of previous block
+        html += '<div class="chat-turn chat-turn-ai">'
+        html += marked.parse(trimmed)
+        html += '</div>'
+      }
+    })
+
+    el.innerHTML = html
+  })
+  .catch(() => {
+    const el = document.getElementById('chat-history')
+    if (el) el.innerHTML = '<p style="color:var(--text-muted)">加载失败</p>'
+  })
+</script>
 </body>
 </html>
