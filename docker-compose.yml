@@ -1,0 +1,8 @@
+services:
+  web:
+    build: .
+    image: learncb-web:latest
+    container_name: learncb-web
+    ports:
+      - "8081:80"
+    restart: unless-stopped

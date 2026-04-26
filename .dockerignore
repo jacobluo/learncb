@@ -1,0 +1,12 @@
+.git
+.gitignore
+.codebuddy
+.vscode
+.idea
+tmp
+AGENTS.md
+CodeBuddy操作手册.md
+Dockerfile
+docker-compose.yml
+.dockerignore
+*.md
