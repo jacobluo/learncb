@@ -8,6 +8,723 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../assets/style.css">
 <link rel="stylesheet" href="../assets/vitepress-theme.css">
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  /* ===== 本页专属样式（与项目全局 token 对齐） ===== */
+  .fact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .fact-card {
+    background: rgba(56, 189, 248, 0.06);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: 10px;
+    padding: 14px 16px;
+    text-align: center;
+    transition: all 0.25s ease;
+  }
+  .fact-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-2px);
+  }
+  .fact-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .fact-label {
+    font-size: 12px;
+    color: #8892a4;
+    line-height: 1.4;
+  }
+
+  .agent-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-top: 16px;
+  }
+  .agent-card {
+    background: rgba(21, 28, 44, 0.8);
+    border: 1px solid #1e293b;
+    border-left: 3px solid #38bdf8;
+    border-radius: 10px;
+    padding: 18px 20px;
+    transition: all 0.25s ease;
+  }
+  .agent-card:hover {
+    border-color: #38bdf8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(56, 189, 248, 0.08);
+  }
+  .agent-card.agent-coding { border-left-color: #38bdf8; }
+  .agent-card.agent-review { border-left-color: #818cf8; }
+  .agent-card.agent-deploy { border-left-color: #fb923c; }
+  .agent-card.agent-test   { border-left-color: #34d399; }
+  .agent-card.agent-improve{ border-left-color: #f472b6; }
+
+  .agent-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+  .agent-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: #e2e8f0;
+  }
+  .agent-tagline {
+    color: #8892a4;
+    font-size: 13px;
+  }
+  .agent-card h5 {
+    color: #38bdf8;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 14px 0 6px 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .agent-card ul {
+    margin: 0 0 4px 0;
+    padding-left: 20px;
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .agent-card ul li code {
+    font-size: 12px;
+  }
+  .agent-card .forbid li::marker { content: "❌ "; }
+
+  details.incident {
+    background: rgba(21, 28, 44, 0.6);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    margin-top: 12px;
+    padding: 0;
+    overflow: hidden;
+  }
+  details.incident[open] { border-color: #fb923c; }
+  details.incident > summary {
+    cursor: pointer;
+    padding: 14px 18px;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: #e2e8f0;
+    user-select: none;
+  }
+  details.incident > summary::-webkit-details-marker { display: none; }
+  details.incident > summary::after {
+    content: "+";
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    color: #38bdf8;
+    transition: transform 0.2s ease;
+  }
+  details.incident[open] > summary::after {
+    content: "−";
+  }
+  details.incident .incident-body {
+    padding: 0 18px 18px 18px;
+    border-top: 1px solid #1e293b;
+    margin-top: 2px;
+  }
+  .incident-tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: rgba(251, 146, 60, 0.15);
+    color: #fb923c;
+    border: 1px solid rgba(251, 146, 60, 0.3);
+    margin-right: 8px;
+  }
+
+  .timeline-page {
+    position: relative;
+    margin: 16px 0 8px 14px;
+    padding-left: 22px;
+    border-left: 2px solid #1e293b;
+  }
+  .timeline-page .t-item {
+    position: relative;
+    padding: 0 0 14px 0;
+  }
+  .timeline-page .t-item::before {
+    content: "";
+    position: absolute;
+    left: -29px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
+  .timeline-page .t-item.t-done::before { background: #34d399; box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.2); }
+  .timeline-page .t-time {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #34d399;
+    display: block;
+    margin-bottom: 2px;
+  }
+  .timeline-page .t-desc {
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .flywheel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 16px 0;
+    padding: 18px;
+    background: rgba(56, 189, 248, 0.04);
+    border: 1px dashed rgba(56, 189, 248, 0.3);
+    border-radius: 10px;
+  }
+  .flywheel .fw-node {
+    flex: 1 1 120px;
+    min-width: 120px;
+    text-align: center;
+    padding: 10px 8px;
+    background: rgba(21, 28, 44, 0.8);
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #e2e8f0;
+  }
+  .flywheel .fw-arrow {
+    color: #38bdf8;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .step-landing {
+    background: rgba(21, 28, 44, 0.6);
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-top: 14px;
+  }
+  .step-landing h5 {
+    color: #34d399;
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .step-landing p {
+    color: #cbd5e1;
+    font-size: 14px;
+    line-height: 1.65;
+    margin: 0 0 8px 0;
+  }
+
+  @media (max-width: 768px) {
+    .fact-grid { grid-template-columns: repeat(2, 1fr); }
+    .flywheel { flex-direction: column; }
+    .flywheel .fw-arrow { transform: rotate(90deg); }
+  }
+
+  /* ============ 新增：锚点跳转链接样式 ============ */
+  .xref {
+    color: #38bdf8;
+    text-decoration: none;
+    border-bottom: 1px dashed rgba(56,189,248,0.4);
+    padding: 0 2px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  .xref:hover {
+    color: #7dd3fc;
+    border-bottom-color: #7dd3fc;
+    background: rgba(56,189,248,0.08);
+  }
+  /* 锚点跳转时顶部留空间（规避固定导航遮挡） */
+  .step-block[id], .incident[id] { scroll-margin-top: 24px; }
+
+  /* ============ 新增：右侧浮动 TOC ============ */
+  .toc-float {
+    position: fixed;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    background: rgba(10, 14, 23, 0.92);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 12px;
+    padding: 14px 14px;
+    max-width: 220px;
+    max-height: 80vh;
+    overflow-y: auto;
+    font-size: 12px;
+  }
+  .toc-float .toc-title {
+    color: #38bdf8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .toc-float .toc-toggle {
+    background: none;
+    border: none;
+    color: #8892a4;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 4px;
+  }
+  .toc-float ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: toc;
+  }
+  .toc-float ol li {
+    counter-increment: toc;
+    margin-bottom: 4px;
+  }
+  .toc-float ol li a {
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 5px;
+    display: block;
+    border-left: 2px solid transparent;
+    transition: all 0.2s ease;
+    line-height: 1.4;
+  }
+  .toc-float ol li a::before {
+    content: counter(toc) ". ";
+    color: #38bdf8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    margin-right: 4px;
+  }
+  .toc-float ol li a:hover {
+    background: rgba(56,189,248,0.08);
+    border-left-color: #38bdf8;
+    color: #e2e8f0;
+  }
+  .toc-float ol li a.active {
+    background: rgba(56,189,248,0.12);
+    border-left-color: #38bdf8;
+    color: #38bdf8;
+  }
+  .toc-float.collapsed ol, .toc-float.collapsed .toc-meta { display: none; }
+  .toc-float.collapsed { max-width: 56px; padding: 10px; }
+  .toc-meta {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(56,189,248,0.15);
+    font-size: 11px;
+    color: #8892a4;
+  }
+  .toc-meta .toc-progress-bar {
+    height: 3px;
+    background: rgba(56,189,248,0.15);
+    border-radius: 2px;
+    margin-top: 6px;
+    overflow: hidden;
+  }
+  .toc-meta .toc-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #38bdf8, #818cf8);
+    width: 0%;
+    transition: width 0.15s ease;
+  }
+
+  /* ============ 新增：章节微型导航（上一节/下一节） ============ */
+  .sec-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px dashed rgba(30, 41, 59, 0.8);
+    font-size: 12px;
+  }
+  .sec-nav a {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(21, 28, 44, 0.5);
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    color: #8892a4;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .sec-nav a:hover {
+    color: #38bdf8;
+    border-color: #38bdf8;
+    background: rgba(56,189,248,0.06);
+  }
+  .sec-nav a.next { text-align: right; }
+  .sec-nav a.empty { visibility: hidden; }
+
+  /* ============ 新增：思维幅度 θ 示意图 ============ */
+  .theta-viz {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 18px;
+  }
+  .theta-panel {
+    background: rgba(10,14,23,0.7);
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 18px 22px;
+    position: relative;
+  }
+  .theta-panel.bad { border-color: rgba(96,165,250,0.3); }
+  .theta-panel.good { border-color: rgba(52,211,153,0.3); }
+  .theta-panel h5 {
+    color: #e2e8f0;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+    text-align: center;
+  }
+  .theta-panel.bad h5::before { content: "❌ "; }
+  .theta-panel.good h5::before { content: "✅ "; }
+  .theta-svg {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    display: block;
+  }
+  /* 原图（浅色底）嵌入暗色面板的展示样式 */
+  .theta-img-wrap {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 6px;
+    overflow: hidden;
+  }
+  .theta-img {
+    width: 100%;
+    height: auto;
+    max-height: 260px;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
+    cursor: zoom-in;
+  }
+  .theta-panel .theta-caption {
+    color: #8892a4;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  /* ============ 新增：记忆六层视觉化 ============ */
+  .memory-layers {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .memory-card {
+    padding: 14px;
+    border-radius: 10px;
+    background: rgba(21,28,44,0.7);
+    border: 1px solid #1e293b;
+    border-top: 3px solid currentColor;
+    transition: all 0.25s ease;
+  }
+  .memory-card:hover { transform: translateY(-2px); border-bottom-color: currentColor; }
+  .memory-card.ctrl-full  { color: #34d399; }
+  .memory-card.ctrl-semi  { color: #fbbf24; }
+  .memory-card.ctrl-none  { color: #8892a4; }
+  .memory-card .m-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .memory-card .m-title { font-size: 13px; font-weight: 600; }
+  .memory-card .m-badge {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: currentColor;
+    color: #0a0e17 !important;
+    font-weight: 700;
+  }
+  .memory-card .m-body { color: #cbd5e1; font-size: 12px; line-height: 1.55; }
+  .memory-card .m-body code { color: #38bdf8; }
+
+  /* ============ 新增：评价体系三评分器 ============ */
+  .eval-pipeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .eval-card {
+    background: rgba(10,14,23,0.65);
+    border: 1px solid #1e293b;
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    position: relative;
+  }
+  .eval-card.e-code  { border-top: 3px solid #38bdf8; }
+  .eval-card.e-model { border-top: 3px solid #a5b4fc; }
+  .eval-card.e-human { border-top: 3px solid #fb923c; }
+  .eval-card .e-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .eval-card .e-name { color: #e2e8f0; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .eval-card .e-desc { color: #8892a4; font-size: 12px; line-height: 1.55; }
+
+  /* ============ 新增：治理四层栅栏可视化 ============ */
+  .gov-layers {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 14px;
+  }
+  .gov-layer {
+    padding: 12px 16px;
+    border-radius: 8px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 16px;
+    align-items: center;
+    background: rgba(21,28,44,0.7);
+    border: 1px solid #1e293b;
+    border-left-width: 4px;
+  }
+  .gov-layer.l-constitution { border-left-color: #f87171; }
+  .gov-layer.l-rules        { border-left-color: #fbbf24; }
+  .gov-layer.l-agents       { border-left-color: #34d399; }
+  .gov-layer.l-hooks        { border-left-color: #fb923c; background: rgba(251,146,60,0.05); }
+  .gov-layer .l-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #8892a4;
+    min-width: 26px;
+  }
+  .gov-layer .l-content { color: #cbd5e1; font-size: 13px; line-height: 1.5; }
+  .gov-layer .l-content strong { color: #e2e8f0; }
+  .gov-layer .l-tag {
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: rgba(10,14,23,0.6);
+    color: #8892a4;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ============ 新增：Tips 分类横幅 ============ */
+  .tips-banner {
+    margin: 24px 0 14px 0;
+    padding: 10px 16px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    border-left: 4px solid;
+  }
+  .tips-banner.tb-a { background: rgba(56,189,248,0.08);  border-left-color: #38bdf8; color: #38bdf8; }
+  .tips-banner.tb-b { background: rgba(129,140,248,0.08); border-left-color: #a5b4fc; color: #a5b4fc; }
+  .tips-banner.tb-c { background: rgba(52,211,153,0.08);  border-left-color: #34d399; color: #34d399; }
+  .tips-banner.tb-d { background: rgba(251,146,60,0.08);  border-left-color: #fb923c; color: #fb923c; }
+  .tips-banner .tb-icon { font-size: 20px; }
+  .tips-banner .tb-sub {
+    margin-left: auto;
+    font-size: 12px;
+    font-weight: 400;
+    color: #8892a4;
+  }
+
+  /* 主章节 step-badge（七 + 1~7） */
+  .step-header .step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 0 10px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.18), rgba(129,140,248,0.18));
+    border: 1px solid rgba(56,189,248,0.5);
+    color: #7dd3fc;
+    box-shadow: 0 0 12px rgba(56,189,248,0.25);
+    border-radius: 8px;
+  }
+  /* 次级小节 step-badge（x.2 / x.2.y） */
+  .step-header .step-badge.step-badge-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    min-width: 0;
+    height: auto;
+    padding: 3px 10px;
+    color: #8892a4;
+    background: rgba(148, 163, 184, 0.08);
+    border: 1px dashed #334155;
+    box-shadow: none;
+    letter-spacing: 0.3px;
+  }
+  /* 次级 step-header 整体更克制：h3 字号小一点 */
+  .step-header:has(.step-badge-sub) h3 {
+    font-size: 20px;
+    color: #cbd5e1;
+  }
+
+  /* 失效升级路径：横向阶梯卡片 */
+  .escalation-chain {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr;
+    align-items: stretch;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .esc-step {
+    background: rgba(10, 14, 23, 0.75);
+    border: 1px solid #1e293b;
+    border-top: 3px solid #475569;
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  }
+  .esc-step:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.35);
+  }
+  .esc-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .esc-idx {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    background: rgba(148, 163, 184, 0.15);
+    color: #cbd5e1;
+  }
+  .esc-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e2e8f0;
+    letter-spacing: 0.3px;
+  }
+  .esc-trigger {
+    font-size: 12px;
+    color: #8892a4;
+    padding: 4px 8px;
+    background: rgba(148, 163, 184, 0.06);
+    border-left: 2px solid #475569;
+    border-radius: 3px;
+  }
+  .esc-action {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.55;
+    flex: 1;
+  }
+  .esc-action strong { color: #e2e8f0; }
+  .esc-carrier {
+    font-size: 11px;
+    color: #94a3b8;
+    padding-top: 8px;
+    border-top: 1px dashed #1e293b;
+    word-break: break-all;
+  }
+  .esc-carrier code {
+    background: rgba(56,189,248,0.08);
+    color: #7dd3fc;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  /* 各阶段色系 */
+  .esc-rules      { border-top-color: #fbbf24; }
+  .esc-rules .esc-idx     { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+  .esc-rules .esc-trigger { border-left-color: #fbbf24; color: #fde68a; }
+  .esc-hooks      { border-top-color: #fb923c; }
+  .esc-hooks .esc-idx     { background: rgba(251,146,60,0.15);  color: #fb923c; }
+  .esc-hooks .esc-trigger { border-left-color: #fb923c; color: #fdba74; }
+  .esc-codebuddy  { border-top-color: #f87171; }
+  .esc-codebuddy .esc-idx     { background: rgba(248,113,113,0.15); color: #f87171; }
+  .esc-codebuddy .esc-trigger { border-left-color: #f87171; color: #fca5a5; }
+  .esc-skills     { border-top-color: #34d399; }
+  .esc-skills .esc-idx     { background: rgba(52,211,153,0.15);  color: #34d399; }
+  .esc-skills .esc-trigger { border-left-color: #34d399; color: #6ee7b7; }
+  .esc-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #38bdf8;
+    text-shadow: 0 0 12px rgba(56,189,248,0.4);
+    padding: 0 2px;
+  }
+
+  @media (max-width: 1280px) {
+    .toc-float { display: none; }
+  }
+  @media (max-width: 900px) {
+    .escalation-chain {
+      grid-template-columns: 1fr;
+      gap: 6px;
+    }
+    .esc-arrow {
+      transform: rotate(90deg);
+      padding: 2px 0;
+    }
+  }
+  @media (max-width: 768px) {
+    .memory-layers { grid-template-columns: 1fr; }
+    .eval-pipeline { grid-template-columns: 1fr; }
+    .gov-layer { grid-template-columns: auto 1fr; }
+    .gov-layer .l-tag { grid-column: 2; justify-self: start; font-size: 10px; }
+  }
+</style>
 </head>
 <body>
 
@@ -34,44 +751,131 @@
 
 <button class="menu-btn" id="menuBtn">☰</button>
 
+<!-- ===== 右侧浮动 TOC ===== -->
+<aside class="toc-float" id="tocFloat">
+  <div class="toc-title">
+    <span>目录</span>
+    <button class="toc-toggle" id="tocToggle" title="折叠/展开">⇋</button>
+  </div>
+  <ol>
+    <li><a href="#sec-bg">背景与项目定位</a></li>
+    <li><a href="#sec-theory">理论基石 · 思维幅度 θ</a></li>
+    <li><a href="#sec-arch">架构全景与演示</a></li>
+    <li><a href="#sec-gov">治理栅栏与目录结构</a></li>
+    <li><a href="#sec-agents">五子 Agent 与协作协议</a></li>
+    <li><a href="#sec-memory">记忆与评价体系</a></li>
+    <li><a href="#sec-skill">Skill 编排与事故复盘</a></li>
+    <li><a href="#sec-permission">权限 hooks 与改进飞轮</a></li>
+    <li><a href="#sec-landing">落地与操作 Tips</a></li>
+  </ol>
+  <div class="toc-meta">
+    阅读进度
+    <div class="toc-progress-bar"><div class="toc-progress-fill" id="tocProgress"></div></div>
+  </div>
+</aside>
+
 <main class="main-content">
   <section class="section section-dark">
     <div class="section-inner">
 
-      <!-- ===== 背景介绍 ===== -->
-      <div class="step-block">
+      <!-- ===== ① 背景介绍 ===== -->
+      <div class="step-block" id="sec-bg">
         <div class="step-header">
           <span class="step-badge">七</span>
           <h3>实战：多 Agent 协作开发工厂（issue → 编码 → 审查 → 部署 → 测试 闭环）</h3>
         </div>
 
         <div class="card card-highlight">
-          <h4>项目背景</h4>
-          <p>本案例展示基于 CodeBuddy 平台的 <strong>AI 多 Agent 协作开发工厂</strong>，实现了 <code>issue → 编码 → 审查 → 部署 → 测试</code> 的完整闭环。由 1 个 main agent 负责调度，5 个子 Agent 各司其职，外加 1 个常驻横向监督 Agent，全部以 <strong>CNB Issue 作为唯一事实来源</strong>协作推进。</p>
-          <p style="margin-top:8px;">代码仓库：<a href="https://cnb.cool/carlffeng/agentteamdemo_drawio" target="_blank">https://cnb.cool/carlffeng/agentteamdemo_drawio</a></p>
-          <div class="mcp-features" style="margin-top:12px;">
-            <span class="mcp-tag">Main Agent 调度</span>
-            <span class="mcp-tag">Coding Agent</span>
-            <span class="mcp-tag">Review Agent</span>
-            <span class="mcp-tag">Deploy Agent</span>
-            <span class="mcp-tag">Test Agent</span>
-            <span class="mcp-tag">Improvement Agent</span>
-            <span class="mcp-tag">CNB Issue 驱动</span>
-          </div>
+          <h4>项目定位</h4>
+          <p>可直接 fork 到生产仓的多 Agent <strong>治理骨架</strong>。1 个 main 调度 + 5 个子 Agent 各司其职，以 <strong>CNB Issue 为唯一事实来源</strong>，完成 <code>issue → 编码 → 审查 → 部署 → 测试</code> 闭环。</p>
+          <p style="margin-top:8px;">代码仓库：<a href="https://cnb.cool/carlffeng/agentteamdemo" target="_blank">https://cnb.cool/carlffeng/agentteamdemo</a></p>
+
         </div>
       </div>
 
-      <!-- ===== 架构图 ===== -->
-      <div class="step-block">
+      <!-- ===== 1 理论基石：思维幅度与长时运行原理 ===== -->
+      <div class="step-block" id="sec-theory">
         <div class="step-header">
-          <span class="step-badge">架构</span>
-          <h3>5 子 Agent 协作流</h3>
+          <span class="step-badge">1</span>
+          <h3>理论基石：思维幅度 θ 与 while 循环</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">动手搭 5 个 Agent 之前，先理解两个底层模型——本项目的设计决策都源自于此：</p>
+
+        <h4 style="margin-top:18px; color:#e2e8f0;">① 约束哲学：AI 问题 = 思维幅度过大</h4>
+        <p style="color:#cbd5e1;">AI 不是线性推进，而是<strong>分步、按概率</strong>逼近目标。每一步落在一个「行为扇面」里——扇面越宽，偏离越快，越难收敛。</p>
+
+        <div class="config-table" style="margin-top:10px;">
+          <div class="config-row config-header" style="grid-template-columns: 1fr 2.5fr;">
+            <span>概念</span><span>含义</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 2.5fr;"><span><strong>思维幅度 θ</strong></span><span>AI 每一步思考出的方案丰富度（越大越发散）</span></div>
+          <div class="config-row" style="grid-template-columns: 1fr 2.5fr;"><span><strong>行为扇面</strong></span><span>下一步可能落到的状态集合（概率面）</span></div>
+          <div class="config-row" style="grid-template-columns: 1fr 2.5fr;"><span><strong>落脚点</strong></span><span>实际执行后的某一个状态（扇面内一点）</span></div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 核心推论：</strong>想让 AI 更快收敛，必须<strong>缩小 θ</strong>——<em>想象力的反面就是规则</em>。本项目三类规范即对 θ 的三重约束：
+        </div>
+
+        <div class="config-table" style="margin-top:10px;">
+          <div class="config-row config-header">
+            <span>规范类型</span><span>约束什么</span><span>在本项目的落地</span>
+          </div>
+          <div class="config-row"><span><strong>流程规范</strong></span><span>agent 之间的协作规则</span><span>CNB Issue 闭环 + 5 子 agent 接力链</span></div>
+          <div class="config-row"><span><strong>行为规范</strong></span><span>单个 agent 什么能做 / 不能做</span><span>Prompt 六段式（尤其"禁止清单"）</span></div>
+          <div class="config-row"><span><strong>改进规范</strong></span><span>系统如何自我演进，清理冲突</span><span>improvement-agent + proposal 机制</span></div>
+        </div>
+
+        <!-- 思维幅度示意图 -->
+        <div class="theta-viz">
+          <div class="theta-panel bad">
+            <h5>无约束 · θ 发散</h5>
+            <div class="theta-img-wrap">
+              <img src="../images/multi-agents/theta-diverge.png" alt="无约束 · θ 发散示意图" class="screenshot theta-img">
+            </div>
+            <div class="theta-caption">θ 大 → 每步扇面宽 → 落脚点在波浪轨迹上游荡 → 收敛慢</div>
+          </div>
+
+          <div class="theta-panel good">
+            <h5>有规则 · θ 收敛（同一起点/目标 · 路径急剧缩短）</h5>
+            <div class="theta-img-wrap">
+              <img src="../images/multi-agents/theta-converge.png" alt="有规则 · θ 收敛示意图" class="screenshot theta-img">
+            </div>
+            <div class="theta-caption">θ 小 → 扇面窄 → 落脚点沿直线快速逼近 → 同一目标只用 4 步</div>
+          </div>
+        </div>
+
+        <p style="color:#8892a4; font-size:12px; text-align:center; margin-top:10px; font-style:italic;">🎯 三类规范的作用就是把<span style="color:#60a5fa;">蓝色宽扇面</span>压缩为<span style="color:#34d399;">绿色窄扇面</span>，让 AI 从"10 步绕路"变"4 步直达"。</p>
+
+        <h4 style="margin-top:24px; color:#e2e8f0;">② 运行原理：长时框架本质是 while 循环</h4>
+        <p style="color:#cbd5e1;">从程序员视角，长时运行框架就是一个 <code>while</code>。构造它需要明确两件事：</p>
+
+        <div class="code-block" style="background:#0d1117; border:1px solid #1e293b; border-radius:8px; padding:16px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; margin-top:10px;">
+<span style="color:#c084fc;">while</span> <span style="color:#38bdf8;">NOT</span> <span style="color:#a5b4fc;">all_issues_closed</span>:
+    pull_issue   <span style="color:#8892a4;"># coding-agent @每 30min</span>
+    code         <span style="color:#8892a4;"># coding-agent</span>
+    review       <span style="color:#8892a4;"># review-agent</span>
+    deploy       <span style="color:#8892a4;"># deploy-agent（生产需人工批）</span>
+    test         <span style="color:#8892a4;"># test-agent</span>
+    file_bug     <span style="color:#8892a4;"># test-agent → CNB Issue</span>
+    improve      <span style="color:#8892a4;"># improvement-agent @每 2h</span>
+        </div>
+
+        <p style="color:#cbd5e1; margin-top:14px;">循环能跑稳的关键：<strong>清晰的退出条件</strong>（所有 issue 关闭 & bug 修复）+ <strong>每一步动作收敛</strong>（靠三类规范）。后文的治理四层栅栏、评价体系、事故复盘，都是在确保这个 while 不跑飞。</p>
+      </div>
+
+      <!-- ===== ② 架构全景 ===== -->
+      <div class="step-block" id="sec-arch">
+        <div class="step-header">
+          <span class="step-badge">2</span>
+          <h3>架构全景 · 5 子 Agent 协作流 + 谁调度谁</h3>
         </div>
 
         <div class="step-row">
           <div class="step-row-text">
             <strong>用户 → main agent（管理者，只调度）→ 5 个子 Agent</strong>
-            <p>用户通过 CNB Issue 下达需求，<code>main agent</code> 作为管理者只做调度、不写业务代码；<code>coding-agent</code> 负责编码实现，<code>review-agent</code> 做安全 + 规范 + 架构审查，<code>deploy-agent</code> 跑部署流水线，<code>test-agent</code> 跑测试验证。<code>improvement-agent</code> 作为常驻横向监督 Agent，持续观察所有 Agent 的运行状态，每 2 小时汇报一次改进建议。所有协作过程都以 <strong>CNB Issue</strong> 为唯一事实来源，状态、评论、上下文都落到 Issue。</p>
+            <p>用户通过 CNB Issue 下达需求；<code>main</code> 只调度、不写业务代码；<code>coding</code> / <code>review</code> / <code>deploy</code> / <code>test</code> 各司其职，<code>improvement</code> 常驻横向监督，每 2h 汇总。所有协作状态以 <strong>CNB Issue</strong> 为唯一事实来源。</p>
           </div>
           <div class="step-row-thumb">
             <img src="../images/multi-agents/1-multiagent.png" alt="多 Agent 协作架构图">
@@ -90,15 +894,28 @@
                   ↑
               CNB Issue（唯一事实来源）</code></pre>
         </div>
+
+        <h4 style="margin-top:24px;">谁调度谁 · 信息流矩阵</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>发起方 → 接收方</span><span>触发时机</span><span>消息内容要素</span>
+          </div>
+          <div class="config-row"><span>用户 → <code>main</code></span><span>下达需求</span><span>Issue 编号 / 诉求描述</span></div>
+          <div class="config-row"><span><code>main</code> → <code>coding</code></span><span>30min 轮询 / 手动派单</span><span>分支策略 + 验收标准 + ACK 要求</span></div>
+          <div class="config-row"><span><code>coding</code> → <code>review</code></span><span>PR 创建后</span><span>分支名 + commit + 变更摘要</span></div>
+          <div class="config-row"><span><code>review</code> → <code>deploy</code></span><span>审查通过</span><span>分支 + commit + 审查纪要</span></div>
+          <div class="config-row"><span><code>deploy</code> → <code>test</code></span><span>测试环境就绪</span><span>环境地址 + 健康检查结果</span></div>
+          <div class="config-row"><span><code>test</code> → <code>coding</code>/<code>main</code></span><span>发现 bug / 测试通过</span><span>Issue 编号 + 失败详情 或 关闭动作</span></div>
+          <div class="config-row"><span><code>improvement</code> → <code>main</code></span><span>每 2h / 发现异常</span><span>健康报告 + 改进建议</span></div>
+        </div>
+        <p style="color:#8892a4; font-size:12px; margin-top:10px; font-style:italic;">💡 这张表展示 <strong>agent 之间的调度关系</strong>。agent 具体调用哪些 skill 完成任务，见 <a href="#sec-skill" class="xref">§6 Skill 典型协作链路</a>。</p>
       </div>
 
-      <!-- ===== 演示视频 ===== -->
-      <div class="step-block">
-        <div class="step-header">
-          <span class="step-badge">演示</span>
-          <h3>端到端协作演示视频</h3>
-        </div>
-        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 12px;">以下视频完整记录了多 Agent 协作从 Issue 创建到部署上线的全过程。</p>
+      <!-- ===== ③ 演示视频（合并进 ②） ===== -->
+      <div id="sec-video" style="scroll-margin-top:24px;"></div>
+      <div class="step-block" style="margin-top:-12px; border-top:1px dashed #1e293b; padding-top:22px;">
+        <h4 style="color:#38bdf8; font-size:18px; margin:0 0 14px 0;">■ 端到端协作演示视频</h4>
+        <p style="color: var(--text-dim); font-size: 14px; margin-bottom: 12px;">完整记录从 Issue 创建到部署上线的全过程。</p>
         <div class="video-wrapper" style="border-radius: 12px; overflow: hidden; background: #000;">
           <video controls preload="metadata" style="width: 100%; display: block;" poster="../images/multi-agents/1-multiagent.png">
             <source src="../images/multi-agents/2-multiagent-video.mp4" type="video/mp4">
@@ -107,65 +924,1725 @@
         </div>
       </div>
 
-      <!-- ===== .codebuddy 内部结构 ===== -->
-      <div class="step-block">
+      <!-- ===== ④ 治理三层模型 ===== -->
+      <div class="step-block" id="sec-gov">
         <div class="step-header">
-          <span class="step-badge">结构</span>
-          <h3>.codebuddy/ 内部结构</h3>
+          <span class="step-badge">3</span>
+          <h3>治理四层栅栏 + .codebuddy 目录结构</h3>
         </div>
 
-        <div class="step-row">
-          <div class="step-row-text">
-            <strong>Agent / Team / Skill / Improvement / Rules 分层组织</strong>
-            <p>项目以 <code>.codebuddy/</code> 目录承载所有 Agent 协作资产：5 个 Agent 模板各自定义职责与触发条件；<code>teams/dev-factory/</code> 管理运行时配置和各 Agent 的消息队列；13 个 Skill 封装 CNB API、流水线、Review、PR 等通用能力；<code>improvement/</code> 沉淀改进日志、提案和卡住日志；<code>rules/</code> 提供非强制的工程建议索引。</p>
+        <p style="color:#cbd5e1;">多 Agent 失控的根因不是"agent 不够强"，而是"没有共同的法律"。本项目用<strong>四层栅栏</strong>解决决策漂移——从温和提醒到强制拦截层层递进：</p>
+
+        <div class="gov-layers">
+          <div class="gov-layer l-constitution">
+            <span class="l-num">L1</span>
+            <span class="l-content">🔴 <strong>宪法层 · <code>CODEBUDDY.md</code></strong><br><span style="color:#8892a4;">底线 / 一票否决 · ≤ 500 行 · 带惩罚措施</span></span>
+            <span class="l-tag">main + 用户双批</span>
+          </div>
+          <div class="gov-layer l-rules">
+            <span class="l-num">L2</span>
+            <span class="l-content">🟡 <strong>指导层 · <code>.codebuddy/rules/*.md</code></strong><br><span style="color:#8892a4;">条件触发的建议性规则（会随多轮对话衰减）</span></span>
+            <span class="l-tag">improvement 起草 · main 审 · 用户确认</span>
+          </div>
+          <div class="gov-layer l-agents">
+            <span class="l-num">L3</span>
+            <span class="l-content">🟢 <strong>执行层 · <code>.codebuddy/agents/*.md</code></strong><br><span style="color:#8892a4;">各 agent prompt（内嵌"禁止清单"）</span></span>
+            <span class="l-tag">improvement 起草 · main 审 · 用户批</span>
+          </div>
+          <div class="gov-layer l-hooks">
+            <span class="l-num">L4</span>
+            <span class="l-content">⛔ <strong>拦截层 · <code>.codebuddy/hooks/</code> + <code>settings.json</code></strong><br><span style="color:#8892a4;">程序级强制拦截（rules 被跳过时的救命稻草）</span></span>
+            <span class="l-tag">用户直接配置 · main 无权动</span>
           </div>
         </div>
 
-        <div class="code-block" style="margin-top:12px;">
-<pre style="margin:0;white-space:pre;"><code>.codebuddy/
-├── agents/          # 5 个 Agent 模板
-│   ├── coding-agent.md       # 每 30 分钟拉 issue → 独立分支编码
-│   ├── review-agent.md       # 安全 + 规范 + 架构审查
-│   ├── deploy-agent.md       # 测试/生产环境部署（生产需用户批准）
-│   ├── test-agent.md         # 单测 + 集成测试 + 回归
-│   └── improvement-agent.md  # 常驻监督，每 2 小时汇报
-├── teams/dev-factory/
-│   ├── config.json           # 运行时配置（6 成员）
-│   └── inboxes/*.json        # 各 agent 消息队列状态
-├── skills/          # 13 个 Skill（cnb-api/pipeline/review/pr 等）
-├── improvement/     # 改进日志(60KB) + 提案 + 卡住日志
-└── rules/README.md  # 非强制建议索引</code></pre>
+        <h4 style="margin-top:22px;">失效升级路径</h4>
+        <p style="color:#8892a4; font-size:13px; margin:0 0 14px 0;">规则总会被 AI"跳过"，按此链条逐级升级，直到约束落地生效。</p>
+        <div class="escalation-chain">
+          <div class="esc-step esc-rules">
+            <div class="esc-head"><span class="esc-idx">①</span><span class="esc-name">rules</span></div>
+            <div class="esc-trigger">多轮对话后 AI 不再遵守</div>
+            <div class="esc-action">软约束，作为起点</div>
+            <div class="esc-carrier"><code>.codebuddy/rules/*.md</code></div>
+          </div>
+          <div class="esc-arrow" aria-hidden="true">→</div>
+          <div class="esc-step esc-hooks">
+            <div class="esc-head"><span class="esc-idx">②</span><span class="esc-name">hooks</span></div>
+            <div class="esc-trigger">rules 被跳过 / AI 绕开</div>
+            <div class="esc-action">升级为<strong>程序级强拦截</strong>，AI 绕不过</div>
+            <div class="esc-carrier"><code>.codebuddy/hooks/</code> + <code>settings.json</code></div>
+          </div>
+          <div class="esc-arrow" aria-hidden="true">→</div>
+          <div class="esc-step esc-codebuddy">
+            <div class="esc-head"><span class="esc-idx">③</span><span class="esc-name">CODEBUDDY.md</span></div>
+            <div class="esc-trigger">涉及安全 / 流程 / 底线</div>
+            <div class="esc-action">再提升为<strong>全局底线</strong>，冲突时一票否决</div>
+            <div class="esc-carrier">项目根 <code>CODEBUDDY.md</code></div>
+          </div>
+          <div class="esc-arrow" aria-hidden="true">→</div>
+          <div class="esc-step esc-skills">
+            <div class="esc-head"><span class="esc-idx">④</span><span class="esc-name">skills</span></div>
+            <div class="esc-trigger">流程化 / 高频重复场景</div>
+            <div class="esc-action">抽成可调用流程，在 rules 里<strong>显式触发</strong></div>
+            <div class="esc-carrier"><code>.codebuddy/skills/&lt;name&gt;/</code></div>
+          </div>
+        </div>
+        <p style="color:#8892a4; font-size:12px; margin:10px 0 0 0; font-style:italic;">💡 约束强度：①提示 &lt; ②程序拦截 &lt; ③全局底线；④是对高频场景的流程化沉淀，让规则"可调用"而非"靠记"。</p>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 强约束词 + 惩罚：</strong>规则多用"<strong>不要 / 注意 / 禁止</strong>"，每条核心规则配套"<em>违反 N 次 → 降级/冻结</em>"（参考 U2 / U5 / U8 阈值）。想象力的反面是规则，规则的反面是放任。
+        </div>
+
+        <h4 style="margin-top:22px;">CODEBUDDY.md 七大底线</h4>
+        <div class="code-block markdown-body" data-markdown style="max-height:420px; overflow-y:auto;">
+```markdown
+# CODEBUDDY.md — 项目核心规格与底线
+
+## 1. 角色定位（最重要）
+- 主 agent = 管理者：交互 / 规划 / 调度 / 监督，不执行具体事务
+- 子 agent = 执行者：coding / review / deploy / test / improvement
+- 当现有 agent 能力不足，新建专用 agent，保持职责单一
+
+## 2. 安全底线（一票否决）
+1. 密钥安全：任何 token/证书必须放 .env 或密钥仓库；严禁进源码/日志/
+   commit/issue/PR/agent prompt；.env 必须 gitignore
+2. 生产环境保护：main 确认 → 用户明确批准 → deploy-agent 执行；
+   生产与测试流水线物理隔离
+3. 分支隔离：每个大模块独立分支 + 独立 service，合并前必须通过 review + test
+
+## 3. 工作流底线
+用户 → 主 agent → coding → review → deploy → test
+         ↑                                      ↓
+         └─────── issue（CNB）─────────────────┘
+- CNB Issue 是唯一事实来源
+- 只有用户明确批准后，才允许部署到生产环境
+
+## 4. 文档与目录约定（强制）
+CODEBUDDY.md / team.md / .codebuddy/agents|teams|rules/ / .env.example
+
+## 5. Agent 通信规范
+- 关键节点必须同步回主 agent
+- 触及安全底线 / 生产环境 / 破坏性变更 / 跨 agent 冲突 必须上报，不得自决
+
+## 6. improvement-agent 的特殊权限与义务
+- 义务：持续运行，记录所有错误/返工/冲突，周期性产出改进建议
+- 权限：可主动清理过期规则、冲突配置、僵尸分支（重要变更需双批）
+- 禁止：停止优化循环、删除未归档的历史问题记录
+
+## 7. 版本与变更
+- 本文件任何修改必须经用户确认
+- 子 agent 模板变更：improvement 起草 → main 审核 → 用户最终批准
+```
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:16px;">
+          <strong>⚠️ 冲突优先级：</strong><code>hooks</code> &gt; <code>CODEBUDDY.md</code> &gt; <code>rules/</code> &gt; <code>agents/*.md</code>，冲突时以前者为准——避免多 Agent 决策漂移的核心机制。
         </div>
       </div>
 
-      <!-- ===== 角色职责 ===== -->
-      <div class="step-block">
+      <!-- ===== ⑤ .codebuddy 内部结构（合并进 ④） ===== -->
+      <div id="sec-struct" style="scroll-margin-top:24px;"></div>
+      <div class="step-block" style="margin-top:-12px; border-top:1px dashed #1e293b; padding-top:22px;">
+        <h4 style="color:#38bdf8; font-size:18px; margin:0 0 14px 0;">■ .codebuddy/ 内部结构（真实目录）</h4>
+
+        <p style="color:#cbd5e1;">整套治理骨架约 <strong>15 个 Markdown + 1 个 config.json</strong>，零业务代码即可让任何 CNB 仓库具备多 Agent 开发能力。</p>
+
+        <div class="code-block" style="margin-top:12px;">
+<pre style="margin:0;white-space:pre;"><code>.codebuddy/
+├── agents/                        # 5 个 agent prompt 模板
+│   ├── coding-agent.md            # 每 30 分钟拉 issue → 独立分支编码
+│   ├── review-agent.md            # 安全 + 规范 + 架构审查
+│   ├── deploy-agent.md            # 测试/生产流水线（生产需用户批准）
+│   ├── test-agent.md              # 单测 + 集成测试 + 回写 issue
+│   └── improvement-agent.md       # 常驻监督，每 2 小时汇报
+├── teams/dev-factory/
+│   ├── config.json                # 运行时配置（leadAgentId + 6 成员）
+│   └── inboxes/                   # 各 agent 消息队列（JSON）
+│       ├── team-lead.json
+│       ├── coding-agent.json
+│       ├── review-agent.json
+│       ├── deploy-agent.json
+│       ├── test-agent.json
+│       └── improvement-agent.json
+├── teams/dev-factory.bak-*/       # 历次重建的备份（取证用，共 3 份）
+├── skills/                        # 12 个官方复用 + 2 个项目原创
+│   │                              # （官方源自 cnb.cool/cnb/skills/cnb-skill）
+│   ├── cnb-api/   cnb-pipeline/   cnb-knowledge-base/        # 官方
+│   ├── code-commit/   code-review/   pr-diff/   pr-summary/  # 官方
+│   ├── npc-search/   npc-delegate/                           # 官方
+│   ├── text-path-converter/   tapd-resource-fetcher/         # 官方
+│   ├── upload-attachment/                                    # 官方
+│   ├── team-build/                # 🛠️ 项目原创（多 Agent 编排核心依赖）
+│   └── cnb-pr-review/             # 🛠️ 项目原创（cnb.woa.com 内部 PR 评审）
+├── improvement/
+│   ├── log-2026-04.md             # 月度事件日志（本案例 1000+ 行真实记录）
+│   ├── proposal-20260422-*.md     # 系统性问题改进提案
+│   └── stuck-log.md               # 阻塞登记（需 main/用户介入的事项）
+├── rules/README.md                # 非强制建议索引
+└── automations/*/memory.md        # automation 任务记忆
+
+— 项目根 —
+CODEBUDDY.md       # 核心底线（宪法层）
+team.md            # 团队重建指南（5 步启动脚本）
+.env / .env.example # 密钥（前者必 gitignore）
+skills-lock.json   # 官方 skill 的版本锁文件（CLI 生成；只锁官方，不锁原创）</code></pre>
+        </div>
+      </div>
+
+      <!-- ===== ⑥ 五子 Agent 深度拆解（Prompt 六段式） ===== -->
+      <div class="step-block" id="sec-agents">
         <div class="step-header">
-          <span class="step-badge">角色</span>
-          <h3>各 Agent 的职责与协作边界</h3>
+          <span class="step-badge">4</span>
+          <h3>五子 Agent 深度拆解 + 协作协议三要素（Prompt 六段式）</h3>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 统一模板：</strong>所有 agent prompt 遵循六段式——<code>角色 / 职责 / 输入 / 输出 / 禁止 / 升级</code>。用"禁止清单"比"允许清单"更有效，是本案例踩坑沉淀出的最重要经验。
+        </div>
+
+        <div class="agent-grid">
+
+          <!-- coding-agent -->
+          <div class="agent-card agent-coding">
+            <div class="agent-head">
+              <span class="agent-name">coding-agent</span>
+              <span class="agent-tagline">把 CNB issue 翻译成可运行的代码</span>
+            </div>
+            <h5>核心职责</h5>
+            <ul>
+              <li>定时拉取 CNB <code>state=open &amp;&amp; unassigned</code> 的 issue，按优先级排序</li>
+              <li>每个大模块独立分支：<code>feat/&lt;module&gt;-&lt;issue_id&gt;</code> 或 <code>fix/&lt;module&gt;-&lt;issue_id&gt;</code></li>
+              <li>微服务原则：每个模块独立 service，接口明确定义</li>
+              <li>小步提交，commit message 关联 issue id</li>
+              <li>编码完成 → <code>send_message</code> 给 review-agent（附分支名、变更摘要、影响面）</li>
+            </ul>
+            <h5>禁止（红线）</h5>
+            <ul class="forbid">
+              <li>跨分支混改</li>
+              <li>把密钥写入代码 / 日志 / commit / issue</li>
+              <li>直接推送到 <code>main</code> / <code>master</code> / 生产分支</li>
+              <li>自行发起部署或跳过审查</li>
+              <li>对用户面的大改动未经主 agent 确认</li>
+            </ul>
+            <h5>工作循环（伪代码）</h5>
+            <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code>loop every 30min:
+    issues = cnb.list_issues(state="open", unassigned=True)
+    for issue in prioritize(issues):
+        branch = checkout_module_branch(issue)
+        plan = design(issue)
+        if plan.needs_approval: notify(main); wait()
+        implement(plan)
+        push(branch)
+        notify(review-agent, branch, summary)
+        release_context()</code></pre>
+            </div>
+          </div>
+
+          <!-- review-agent -->
+          <div class="agent-card agent-review">
+            <div class="agent-head">
+              <span class="agent-name">review-agent</span>
+              <span class="agent-tagline">专注找出代码中的安全与规范问题，不写代码只指问题</span>
+            </div>
+            <h5>核心职责</h5>
+            <ul>
+              <li><strong>分支隔离</strong>：每次只审一个分支，结果标注 <code>branch + commit</code></li>
+              <li><strong>审查维度</strong>（按优先级）：① 安全（密钥/SQLi/XSS/越权）② 规范（命名/异常/文档）③ 架构（微服务边界）④ 性能/可观测性</li>
+              <li>通过 → 通知 deploy-agent；不通过 → 返工清单给 coding-agent（按文件+行号）</li>
+              <li>发现 blocker 级问题或架构性问题必须抄送 main</li>
+            </ul>
+            <h5>审查报告格式</h5>
+            <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code>分支: feat/xxx-123
+commit: abc1234
+结论: FAIL / PASS
+问题清单:
+  [BLOCKER] path/to/file.py:42  硬编码 API Key，必须改为 env 读取
+  [MAJOR]   path/to/file.py:88  未处理网络超时异常
+  [MINOR]   path/to/util.py:10  变量命名不符合规范
+架构意见: ...
+安全意见: ...</code></pre>
+            </div>
+            <h5>禁止（红线）</h5>
+            <ul class="forbid">
+              <li>亲自修改代码（只指出，不动手）</li>
+              <li>跨分支对比得出结论</li>
+              <li>放过任何密钥泄露风险（一律 BLOCKER）</li>
+              <li>未看完就放行</li>
+            </ul>
+          </div>
+
+          <!-- deploy-agent -->
+          <div class="agent-card agent-deploy">
+            <div class="agent-head">
+              <span class="agent-name">deploy-agent</span>
+              <span class="agent-tagline">最接近生产的 agent，因此也是最需要克制的 agent</span>
+            </div>
+            <h5>核心职责</h5>
+            <ul>
+              <li><strong>触发</strong>：review 放行 → 自动部测试；main 明确指令 → 才可部生产</li>
+              <li><strong>环境隔离（强制）</strong>：每条分支 = 独立测试流水线 + 独立测试环境 <code>test-&lt;branch-name&gt;</code>；测试与生产物理隔离（不同凭据、网络、数据源）</li>
+              <li><strong>成本控制</strong>：测试环境空闲 1h 自动销毁；同一分支禁止同时拉多个环境</li>
+              <li><strong>生产保护</strong>：用户批准 + main 指令 + 灰度/蓝绿/可回滚；变更清单二次确认</li>
+            </ul>
+            <h5>环境矩阵</h5>
+            <div class="config-table" style="margin-top:6px;">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 1.2fr 1.5fr 1fr;">
+                <span>环境</span><span>触发来源</span><span>凭据来源</span><span>销毁策略</span>
+              </div>
+              <div class="config-row" style="grid-template-columns: 1fr 1.2fr 1.5fr 1fr;"><span><code>test-&lt;branch&gt;</code></span><span>review 通过</span><span>.env.test / 测试密钥仓库</span><span>空闲 1h 自动</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 1.2fr 1.5fr 1fr;"><span>staging</span><span>main 指令</span><span>staging 密钥仓库</span><span>手动</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 1.2fr 1.5fr 1fr;"><span>production</span><span>用户批准 + main</span><span>生产密钥仓库</span><span>永不自动</span></div>
+            </div>
+            <h5>禁止（红线）</h5>
+            <ul class="forbid">
+              <li>无审查即部署 / 无用户批准部生产 / 跨分支复用测试环境</li>
+              <li>把生产凭据注入测试流水线（反之亦然）</li>
+              <li>关闭回滚能力 / 跳过灰度</li>
+            </ul>
+          </div>
+
+          <!-- test-agent -->
+          <div class="agent-card agent-test">
+            <div class="agent-head">
+              <span class="agent-name">test-agent</span>
+              <span class="agent-tagline">质量最后一道关口，测试发现写回 CNB issue</span>
+            </div>
+            <h5>核心职责</h5>
+            <ul>
+              <li><strong>测试层次</strong>：① 单元测试 ② 集成测试（service 间接口 / DB / 中间件） ③ 回归测试 ④ 安全/性能冒烟</li>
+              <li><strong>分支标记</strong>：每份报告必须含 <code>branch + commit + test-env-url</code>；不同分支结果严禁合并</li>
+              <li>发现问题 → 提 CNB issue（标签 <code>bug</code> + <code>from-test-agent</code> + <code>branch:&lt;name&gt;</code>）</li>
+              <li>测试通过 → 关闭功能 issue，附测试报告摘要</li>
+            </ul>
+            <h5>报告格式</h5>
+            <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code>分支: feat/xxx-123
+commit: abc1234
+环境: https://test-feat-xxx-123.example.com
+用例总数: 120
+通过: 118  失败: 2  跳过: 0
+覆盖率: 行 87% / 分支 78%
+失败详情:
+  1. test_user_login_expired — 断言失败：期望 401，实际 500
+     → 已提 issue #456，指派 coding-agent
+结论: FAIL</code></pre>
+            </div>
+            <h5>禁止（红线）</h5>
+            <ul class="forbid">
+              <li>把生产数据用作测试输入</li>
+              <li>日志 / issue 中原样暴露密钥 / token / 用户隐私</li>
+              <li>为了通过测试修改业务代码（修改权在 coding-agent）</li>
+              <li>跳过失败用例不上报</li>
+            </ul>
+          </div>
+
+          <!-- improvement-agent -->
+          <div class="agent-card agent-improve">
+            <div class="agent-head">
+              <span class="agent-name">improvement-agent</span>
+              <span class="agent-tagline">团队的"大脑皮层"，常驻运行，横向监督，不准停止优化</span>
+            </div>
+            <h5>核心职责</h5>
+            <ul>
+              <li><strong>常驻监听</strong>：订阅所有 agent 关键事件（失败/返工/冲突/超时/成本）；每 2h 汇总健康报告</li>
+              <li><strong>问题记录</strong>：结构化存档到 <code>improvement/log-YYYY-MM.md</code>；同类 ≥3 次升级"系统性问题"必产提案</li>
+              <li><strong>改进提案</strong>：<code>proposal-&lt;yyyymmdd&gt;-&lt;slug&gt;.md</code>（背景/现象/根因/方案/收益/风险/批准级别）</li>
+              <li><strong>主动清理</strong>（自主范围）：过期分支 / 空闲测试环境 / 矛盾 rules / 过期 issue</li>
+              <li><strong>指标看板</strong>：闭环时长、返工率、一次通过率、测试失败 TOP、部署失败率、成本趋势</li>
+            </ul>
+            <h5>工作循环（伪代码）</h5>
+            <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code>loop forever:
+    events = collect_events_since(last_tick)
+    classify(events) → {incidents, warnings, cost, conflicts}
+    append_to_log(events)
+    if qualifies_autonomous_cleanup(e): perform_cleanup(e); record()
+    if systemic(pattern): draft_proposal(pattern); notify(main)
+    if elapsed >= 2h: send_health_report(main)
+    sleep(short)</code></pre>
+            </div>
+            <h5>禁止（红线）</h5>
+            <ul class="forbid">
+              <li>停止运行 / 静默</li>
+              <li>未经批准修改 <code>CODEBUDDY.md</code> 或核心 agent 职责</li>
+              <li>自行删除有未结归档的问题记录</li>
+              <li>越权代替其他 agent 执行其本职工作</li>
+            </ul>
+          </div>
+
+        </div>
+
+        <!-- ===== 团队演进 & delegate 模式 ===== -->
+        <h4 style="margin-top:28px; border-top:1px dashed #1e293b; padding-top:20px;">🧬 团队演进：5 人基础班底 → 7 人深化版</h4>
+        <p style="color:#cbd5e1;">真实运行中，<strong>5 人基础班底</strong>暴露两个缺口：① 项目推进缺人催单 ② coding-agent 缺前置规划。因此扩展为 7 人：</p>
+
+        <div class="config-table" style="margin-top:12px;">
+          <div class="config-row config-header" style="grid-template-columns: 1fr 1fr 2fr;">
+            <span>新增角色</span><span>定位</span><span>解决的实际痛点</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1fr 2fr;">
+            <span>🆕 <strong>PM</strong></span>
+            <span>项目进度第一负责人</span>
+            <span>后台扫描发现有未完成 issue 或待办事项，主动推动直到所有 issue 关闭——除非遇到高危操作需用户确认</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1fr 2fr;">
+            <span>🆕 <strong>planer</strong></span>
+            <span>编程任务前置规划</span>
+            <span>coding-agent 接到任务前，先由 planer 分析当前项目+代码状态，产出最优编程方案，再交给 coder 实现</span>
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 经验：</strong>引入 planer 后，coding-agent 返工率显著下降（"上来就写" → "先规划再写"）。引入 PM 后，main 可改用 <code>delegate 模式</code>替代，无需再手写"不许亲自执行子任务"这类约束。
+        </div>
+
+        <h4 style="margin-top:24px;">⚙️ 运行模式：为什么选 delegate？</h4>
+        <div class="config-table" style="margin-top:8px;">
+          <div class="config-row config-header" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+            <span>模式</span><span>主 agent 能力</span><span>适用场景</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+            <span><strong>普通模式</strong></span>
+            <span>可执行具体任务</span>
+            <span>简单任务 / 单 agent 够用</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1.5fr 1.5fr;">
+            <span>✅ <strong>delegate 模式</strong></span>
+            <span><strong>无法执行</strong>具体任务，只能传消息 + 协调</span>
+            <span>本项目采用：复杂任务 / 长时运行 / 严格分层</span>
+          </div>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:12px;">
+          <strong>⚠️ delegate 模式的坑：</strong>该模式下<strong>无法创建定时任务</strong>（<code>automation_update</code> 不可用）。新建 / 修改定时任务时需临时切回普通模式，完成后再切回 delegate。
+        </div>
+      </div>
+
+      <!-- ===== ⑦ 协作协议三要素 ===== -->
+      <div class="step-block" id="sec-protocol">
+        <div class="step-header">
+          <span class="step-badge step-badge-sub">4.2</span>
+          <h3>协作协议三要素（本案例原创沉淀）</h3>
+        </div>
+
+        <!-- 4.2.1 CNB Issue -->
+        <h4 style="margin-top:10px;">4.2.1　CNB Issue = 唯一事实来源</h4>
+        <p style="color:#cbd5e1;">所有 agent 的输入输出、状态扭转、上下文都通过 Issue 评论持久化，任何重启或换人介入都能无损恢复。以 <code>Issue #6 CI runner 升级</code> 为例：</p>
+
+        <div class="timeline-page">
+          <div class="t-item t-done"><span class="t-time">2026-04-22 14:03</span><span class="t-desc">review-agent 代码层扫描产出 issue #6（TRACK-003）</span></div>
+          <div class="t-item t-done"><span class="t-time">2026-04-22 17:44</span><span class="t-desc">PR #13 合入 master（用户批准 → deploy-agent 执行）</span></div>
+          <div class="t-item t-done"><span class="t-time">2026-04-22 18:06</span><span class="t-desc">coding-agent 完成 #7（sync.js 健壮化）PR #15</span></div>
+          <div class="t-item t-done"><span class="t-time">2026-04-24 02:02</span><span class="t-desc">improvement-agent 调 CNB API 关闭 issue（reason=completed，评论 id 留痕）</span></div>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 可追溯性：</strong>commit 关联 issue id（<code>fix(build): xxx (ref: #9)</code> 或 <code>(close #9)</code>），PR body 必含 <code>Closes #N</code>，CNB 留下全链路证据。
+        </div>
+
+        <!-- 4.2.2 inbox + ACK -->
+        <h4 style="margin-top:22px;">4.2.2　Agent 消息协议（ACK 硬约束）</h4>
+        <p style="color:#cbd5e1;">每个 agent 的 <code>inbox</code> 是一份 JSON 数组，消息协议如下：</p>
+
+        <div class="code-block" style="margin-top:8px;">
+<pre style="margin:0;"><code>{
+  "id": "msg-1776868944171-swpial",
+  "from": "team-lead",
+  "to": "coding-agent",
+  "type": "message",          // 或 "broadcast"
+  "content": "执行 Issue #9 收尾链...",
+  "timestamp": "2026-04-22T14:42:24.171Z",
+  "read": true
+}</code></pre>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:14px;">
+          <strong>⚠️ ACK 硬约束（防静默调度死锁）：</strong>所有 agent 模板在 <code>## 角色</code> 之后必须内置以下约束：
+          <div style="margin-top:10px; padding:10px 14px; background:rgba(10,14,23,0.7); border-left:3px solid #fb923c; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#e2e8f0;">
+            被唤醒后本次响应内必须至少回一条 <code style="color:#38bdf8">send_message</code>，禁止静默（即使内容是「条件不满足，弃单原因 XXX」）。
+          </div>
+          <div style="margin-top:8px;">这条约束的由来与完整事故复盘见 <a href="#incident-2" class="xref">§6.2 坑 2</a>。</div>
+        </div>
+
+        <!-- 4.2.3 六段式派单模板 -->
+        <h4 style="margin-top:22px;">4.2.3　六段式派单模板（可直接复制）</h4>
+        <p style="color:#cbd5e1;">所有 main → 子 agent 的派单都遵循此模板，让交棒无歧义：</p>
+
+        <div class="code-block markdown-body" data-markdown style="margin-top:8px;">
+```markdown
+## 任务背景
+<为什么做 + 上游依赖>
+
+## 本次范围（Step A / Step B）
+<明确边界，避免 scope creep>
+
+## 分支策略
+<branch name + base 分支 + 基于哪个 PR/commit>
+
+## 硬约束（零容忍）
+- ❌ 不合并 PR
+- ❌ 不引入新依赖
+- ❌ commit / PR body 不出现明文 token
+
+## ACK 硬约束
+唤醒后立即 send_message 回 ACK，再进入执行。
+
+## 环境
+`export $(grep -v '^#' .env | grep -v '^$' | xargs)`
+```
+        </div>
+      </div>
+
+      <!-- ===== ⑦·½ AI 记忆体系六层 ===== -->
+      <div class="step-block" id="sec-memory">
+        <div class="step-header">
+          <span class="step-badge">5</span>
+          <h3>AI 记忆体系六层 + 评价体系三评分器</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">"金鱼记忆"在长时项目中必然出现。理解 CodeBuddy 的<strong>六层记忆</strong>、分清哪些可干预，才能让团队<strong>越用越顺手</strong>。</p>
+
+        <div class="memory-layers">
+          <div class="memory-card ctrl-full">
+            <div class="m-head"><span class="m-title">指令记忆</span><span class="m-badge">完全可控</span></div>
+            <div class="m-body">载体：<code>CODEBUDDY.md</code> · <code>rules/*.md</code><br>生命周期：持久（但不热加载）</div>
+          </div>
+          <div class="memory-card ctrl-none">
+            <div class="m-head"><span class="m-title">短期记忆</span><span class="m-badge">不可控</span></div>
+            <div class="m-body">载体：当前 session 对话历史<br>生命周期：会话级 · 工具托管</div>
+          </div>
+          <div class="memory-card ctrl-none">
+            <div class="m-head"><span class="m-title">工作记忆</span><span class="m-badge">不可控</span></div>
+            <div class="m-body">载体：自动记录的任务进度<br>生命周期：会话级 · 工具托管</div>
+          </div>
+          <div class="memory-card ctrl-semi">
+            <div class="m-head"><span class="m-title">长期记忆</span><span class="m-badge">半自动</span></div>
+            <div class="m-body">载体：<code>memory/</code> 目录<br>生命周期：跨会话 · 团队共享</div>
+          </div>
+          <div class="memory-card ctrl-semi">
+            <div class="m-head"><span class="m-title">摘要记忆</span><span class="m-badge">半自动</span></div>
+            <div class="m-body">载体：<code>/summarize</code>（可显式调用）<br>生命周期：会话级</div>
+          </div>
+          <div class="memory-card ctrl-none">
+            <div class="m-head"><span class="m-title">休眠重塑</span><span class="m-badge">不可控</span></div>
+            <div class="m-body">载体：Dreaming 机制<br>生命周期：后台自动触发清冲突</div>
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 实战策略：</strong>
+          <ul style="margin:8px 0 0 0; padding-left:22px; line-height:1.75;">
+            <li><strong>核心规则放 <code>CODEBUDDY.md</code></strong>（指令记忆），但控制在 500 行以内，避免衰减</li>
+            <li><strong>高频场景沉淀 <code>memory/&lt;topic&gt;.md</code></strong>（长期记忆），跨 agent 共享</li>
+            <li><strong>主动 <code>/summarize</code></strong>：长对话中手动触发摘要，而不是等 token 满</li>
+            <li>可考虑<strong>外挂记忆体系</strong>（如 mem0）扩展 CodeBuddy 原生能力</li>
+          </ul>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:12px;">
+          <strong>⚠️ "重启 = 进化"：</strong>长对话出现疲惫信号（思考不执行 / 无理由暂停）时，<code>/clear</code> + <code>team-build</code> 主动重启<strong>是对 improvement 沉淀的"强制加载"</strong>，详见 <a href="#incident-3" class="xref">§6.2 坑 3</a> 与 <a href="#tip-c1" class="xref">Tip C1</a>。
+        </div>
+      </div>
+
+      <!-- ===== ⑦·¾ 评价体系三评分器 ===== -->
+      <div class="step-block" id="sec-eval">
+        <div class="step-header">
+          <span class="step-badge step-badge-sub">5.2</span>
+          <h3>评价体系三评分器：没评价等于失控</h3>
+        </div>
+
+        <div class="callout callout-warning">
+          <strong>⚠️ 最重要的一件事：</strong>AI 编程中<strong>只能选一件事，就是建立评价体系</strong>。模型和项目都在迭代，没有评价 = 失控，不敢改一点点东西。
+        </div>
+
+        <p style="color:#cbd5e1; margin-top:14px;">参考 Anthropic《Demystifying Evals for Agents》，建立层层递进的<strong>三级评分器</strong>：</p>
+
+        <div class="eval-pipeline">
+          <div class="eval-card e-code">
+            <span class="e-icon">🤖</span>
+            <div class="e-name">代码评分器</div>
+            <div class="e-desc"><strong>强约束 · 必须通过</strong><br>lint / 类型检查 / 单测 / 断言<br><em>通过 <code>hooks</code> 强制执行</em></div>
+          </div>
+          <div class="eval-card e-model">
+            <span class="e-icon">🧠</span>
+            <div class="e-name">模型评分器</div>
+            <div class="e-desc"><strong>AI 裁判 · 主观维度</strong><br>可读性 / 架构 / 文档 / UX<br><em>review-agent + <code>rules</code> 显式触发</em></div>
+          </div>
+          <div class="eval-card e-human">
+            <span class="e-icon">👤</span>
+            <div class="e-name">人类评分器</div>
+            <div class="e-desc"><strong>金标准 · 抽查</strong><br>边界案例 / 生产前最终闸门<br><em>用户本人 + PR 审批流</em></div>
+          </div>
+        </div>
+
+        <h4 style="margin-top:20px;">强制执行：代码生成之后必须过评分器</h4>
+        <div class="code-block" style="background:#0d1117; border:1px solid #1e293b; border-radius:8px; padding:16px; font-family:'JetBrains Mono',monospace; font-size:13px; color:#cbd5e1; margin-top:8px;">
+<span style="color:#c084fc;">pipeline</span>: coding-agent 产出代码
+    │
+    ├─► 🤖 <span style="color:#38bdf8;">代码评分器</span>（hooks 强制）
+    │     lint / typecheck / unit-test / integration-test
+    │     ❌ 失败 → 打回 coding-agent
+    │     ✅ 通过 → 继续
+    │
+    ├─► 🧠 <span style="color:#a5b4fc;">模型评分器</span>（review-agent）
+    │     可读性 / 架构 / 安全模式 / 规范遵从
+    │     ❌ 问题 → 提 review 意见，打回 coding-agent
+    │     ✅ 通过 → 继续
+    │
+    └─► 👤 <span style="color:#fb923c;">人类评分器</span>（生产前）
+          用户在 PR 上最终批准 → deploy-agent 执行上线
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 关键：</strong>三级评分器<strong>不能靠 agent 自觉</strong>——必须靠 <code>hooks</code>（强制拦截）+ <code>rules 显式触发 skills</code> 确保。这也是本项目 <code>rules/</code> 里每条关键规则都带"<em>调用 &lt;skill-name&gt;</em>"硬触发的原因。
+        </div>
+      </div>
+
+      <!-- ===== ⑧ Skill：官方复用 + 项目原创 ===== -->
+      <div class="step-block" id="sec-skill">
+        <div class="step-header">
+          <span class="step-badge">6</span>
+          <h3>Skill 编排 + 事故复盘（四个最经典的坑）</h3>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 两类来源：</strong>Skill 同时支持"复用官方仓库"与"项目原创"。本项目 <code>.codebuddy/skills/</code> 共 14 个——<strong>12 个来自官方仓库</strong>（通用能力），<strong>2 个项目原创</strong>（<code>team-build</code> 多 Agent 编排核心，<code>cnb-pr-review</code> 内部 CNB 平台定制）。两者目录结构一致，唯一区别是<strong>是否被 <code>skills-lock.json</code> 锁定版本</strong>。
+        </div>
+
+        <h4 style="margin-top:18px;">两类 Skill 对比</h4>
+        <div class="config-table">
+          <div class="config-row config-header" style="grid-template-columns: 1fr 1.5fr 1.5fr 1fr;">
+            <span>类型</span><span>来源</span><span>版本管理</span><span>升级方式</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1.5fr 1.5fr 1fr;">
+            <span>🌐 <strong>官方复用</strong></span>
+            <span><a href="https://cnb.cool/cnb/skills/cnb-skill" target="_blank"><code>cnb.cool/cnb/skills/cnb-skill</code></a></span>
+            <span>CodeBuddy CLI 拉取，写入 <code>skills-lock.json</code> 锁定 hash</span>
+            <span>重新拉取覆盖</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 1.5fr 1.5fr 1fr;">
+            <span>🛠️ <strong>项目原创</strong></span>
+            <span>本仓库 <code>.codebuddy/skills/&lt;name&gt;/</code></span>
+            <span><strong>不</strong>进入 <code>skills-lock.json</code>，随仓库 git 管理</span>
+            <span>直接改 <code>SKILL.md</code></span>
+          </div>
+        </div>
+
+        <h4 style="margin-top:22px;">A · 官方复用（12 个）— 按副作用等级分组</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>等级</span><span>用途边界</span><span>Skills</span>
+          </div>
+          <div class="config-row"><span>🟢 <strong>纯只读 / 格式化</strong></span><span>无仓库副作用</span><span><code>cnb-knowledge-base</code> · <code>pr-diff</code> · <code>pr-summary</code> · <code>text-path-converter</code> · <code>npc-search</code></span></div>
+          <div class="config-row"><span>🟡 <strong>查询 + 轻写入</strong></span><span>需 <code>CNB_TOKEN</code>，会产生评论或 API 调用</span><span><code>cnb-api</code> · <code>cnb-pipeline</code> · <code>tapd-resource-fetcher</code></span></div>
+          <div class="config-row"><span>🔴 <strong>重写入 / 改远端</strong></span><span>必须用户明确授权</span><span><code>code-commit</code> · <code>code-review</code> · <code>npc-delegate</code> · <code>upload-attachment</code></span></div>
+        </div>
+
+        <h4 style="margin-top:22px;">B · 项目原创（2 个）— 重点展开 <code>team-build</code></h4>
+        <p style="color:#8892a4; font-size:13px; margin:4px 0 10px 0;">项目原创包含 <code>team-build</code>（多 Agent 编排核心，本节重点）与 <code>cnb-pr-review</code>（内部 CNB PR 评审适配，不再展开）。<code>team-build</code> 是整个多 Agent 系统能"一键启动、重复可建"的关键。</p>
+
+        <div class="card card-highlight">
+          <p style="color:#cbd5e1; margin:0 0 10px 0;"><strong>为什么是核心：</strong>前面所有章节讲到的"一键拉起 team / 自动绑定 5 个子 agent + 共享 inbox + 配置 automation"，全部由 <code>team-build</code> 完成。它把 CodeBuddy 原语（<code>team_create</code> / <code>task</code> / <code>automation_update</code>）封装成声明式配置，只需一份 <code>team.md</code> 就能在任意环境<strong>一秒复刻同款团队</strong>，也是本案例 <strong>team 重建 4 次</strong>每次兜底的功臣。</p>
+
+          <h5 style="color:#38bdf8; font-size:13px; margin:14px 0 6px 0; text-transform:uppercase; letter-spacing:0.5px;">六步工作流（来自真实 SKILL.md）</h5>
+          <div class="config-table" style="margin-top:4px;">
+            <div class="config-row config-header" style="grid-template-columns: 0.6fr 1.4fr 2fr;">
+              <span>Step</span><span>动作</span><span>调用的 CodeBuddy 原语</span>
+            </div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>1</span><span>读配置（<code>team.md</code> 或 <code>config.json</code>）</span><span>原生文件 IO</span></div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>2</span><span>遍历 <code>.codebuddy/agents/*.md</code> 加载 prompt</span><span>原生文件 IO</span></div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>3</span><span>创建 team 容器</span><span><code>team_create(team_name, description)</code></span></div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>4</span><span>并行拉起 N 个成员</span><span><code>task(subagent_name="code-explorer", name, prompt, mode)</code></span></div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>5</span><span>配置定时任务</span><span><code>automation_update(mode="suggested create", rrule)</code></span></div>
+            <div class="config-row" style="grid-template-columns: 0.6fr 1.4fr 2fr;"><span>6</span><span>健康检查（每成员 inbox 是否有初始消息）</span><span>读 <code>teams/&lt;name&gt;/inboxes/*.json</code></span></div>
+          </div>
+
+          <h5 style="color:#38bdf8; font-size:13px; margin:18px 0 6px 0; text-transform:uppercase; letter-spacing:0.5px;">三个关键设计决策</h5>
+          <ul style="color:#cbd5e1; padding-left: 22px; line-height:1.75;">
+            <li><strong>所有子 agent 统一用 <code>code-explorer</code> 作为底层 subagent</strong>，通过注入不同 prompt 实现差异化角色 —— 无需为每个角色编写独立的 agent 定义文件</li>
+            <li><strong>成员名 = agent 模板文件名</strong>：一眼能从文件名看出角色职责（如 <code>coding-agent.md</code> → <code>coding-agent</code> 成员）</li>
+            <li><strong>automation 最细粒度为 1 小时</strong>（HOURLY）：想要 30 分钟调度需写 <code>INTERVAL=0.5</code>，但平台可能不支持 —— 这也是本案例"improvement-agent 每 2 小时汇总"的由来</li>
+          </ul>
+
+          <h5 style="color:#fb923c; font-size:13px; margin:18px 0 6px 0; text-transform:uppercase; letter-spacing:0.5px;">错误处理矩阵</h5>
+          <div class="config-table">
+            <div class="config-row config-header" style="grid-template-columns: 1.2fr 2fr;"><span>错误</span><span>处理方式</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span>配置文件不存在</span><span>提示用户检查路径，<strong>终止</strong>执行</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span>agent 模板缺失</span><span>跳过该成员，记录警告，继续其他</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>team_create</code> 失败</span><span><strong>回滚</strong>已创建的成员，报告错误</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>automation_update</code> 失败</span><span>记录失败任务，继续执行其他</span></div>
+          </div>
+
+          <p style="color:#8892a4; font-size:13px; margin-top:14px; font-style:italic;">💡 <code>team-build</code> 是"声明式多 Agent 编排"的范例：用户维护配置（<code>team.md</code> + <code>agents/*.md</code>），skill 将其"编译"成运行时实例。新增子 agent 只需：① 写一份 <code>&lt;new-agent&gt;.md</code> ② 在 <code>team.md</code> 加一行 ③ 再跑一次 <code>team-build</code>，零代码。</p>
+        </div>
+
+        <h4 style="margin-top:22px;">C · 可扩充的原创 Skill 方向（待实现）</h4>
+        <div class="callout callout-tip">
+          <strong>💡 目前只落地了 2 个原创 skill（<code>team-build</code> / <code>cnb-pr-review</code>）</strong>，Skill 机制的扩展潜力远不止于此。基于 1000+ 行 improvement log 沉淀出的痛点，下列 skill 方向可按需扩展：
+        </div>
+
+        <div class="config-table" style="margin-top:12px;">
+          <div class="config-row config-header" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span>候选 Skill</span><span>解决的痛点</span><span>调用的原语</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>inbox-janitor</code></span>
+            <span>清理重复派单 + 催促反模式检测（WATCH-004 O1）</span>
+            <span>读写 <code>inboxes/*.json</code></span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>health-reporter</code></span>
+            <span>自动生成月度健康报告（从 <code>log-YYYY-MM.md</code> 聚合指标）</span>
+            <span>读 log + 写入报告文件</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>proposal-drafter</code></span>
+            <span>当同类问题 ≥3 次时自动起草 <code>proposal-*.md</code> 初稿</span>
+            <span>log 解析 + 模板渲染</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>branch-fixer</code> <span style="color:#34d399; font-size:11px;">(已有 service)</span></span>
+            <span>扫描仓库默认分支异常并修正（本项目 issue #1 同名 service 已实现）</span>
+            <span>CNB API + dry-run</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>agent-template-validator</code></span>
+            <span>校验 <code>agents/*.md</code> 是否包含 ACK 硬约束 / 六段式结构完整</span>
+            <span>Markdown 解析 + schema 校验</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.2fr 2fr 1.3fr;">
+            <span><code>stuck-detector</code></span>
+            <span>检测 agent 静默（ACK 后长期零外发）→ 自动登记 <code>stuck-log.md</code></span>
+            <span>inbox 扫描 + 时间戳比对</span>
+          </div>
+        </div>
+
+        <p style="color:#8892a4; font-size:13px; margin-top:14px; font-style:italic;">💡 <strong>识别原创 skill 的三条件</strong>：① 跨 agent 复用 ② 固定步骤可解决 ③ 当前靠 prompt 硬编码。三者满足即应抽成 skill——官方仓库只提供通用能力，<strong>业务级流程必须靠原创 skill 沉淀</strong>。</p>
+
+        <h4 style="margin-top:22px;">典型协作链路（不区分来源，混合使用）</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>场景</span><span>Skill 链路</span>
+          </div>
+          <div class="config-row"><span>读 CNB issue 并回复</span><span><code>cnb-api</code> → <code>text-path-converter</code> → 分析 → <code>cnb-api</code>（评论）</span></div>
+          <div class="config-row"><span>开源仓 PR 评审</span><span><code>pr-diff</code> → <code>code-review</code>（官方）</span></div>
+          <div class="config-row"><span>内部 CNB PR 评审</span><span><code>pr-diff</code> → <strong><code>cnb-pr-review</code>（原创）</strong></span></div>
+          <div class="config-row"><span>总结 PR</span><span><code>pr-diff</code> → <code>pr-summary</code></span></div>
+          <div class="config-row"><span>实现 issue 编码</span><span><code>cnb-api</code> → 实现 → <code>code-commit</code> → <code>code-review</code>（自查）</span></div>
+          <div class="config-row"><span>CI 故障排查</span><span><code>cnb-api</code>（拿 sn）→ <code>cnb-pipeline</code> 诊断模式 → 配置模式 + validator 校验</span></div>
+          <div class="config-row"><span>团队启动</span><span><code>team-build</code>（读 <code>team.md</code> → <code>team_create</code> → 拉 member → <code>automation_update</code>）</span></div>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:16px;">
+          <strong>⚠️ 与安全底线的交叉校验：</strong>所有 🔴 级 skill 与 <code>CODEBUDDY.md §2</code> 强耦合——用到 <code>CNB_TOKEN</code> 的 skill 必须<strong>只 <code>export</code> 不回显</strong>，严禁把 token 写入 <code>cnb issues comment --body</code> 或 PR body。<strong>原创 skill 合入前必须经 review-agent 安全审查</strong>（不像官方 skill 已经社区验证）。
+        </div>
+      </div>
+
+      <!-- ===== ⑨ 事故复盘（两个经典坑） ===== -->
+      <div class="step-block" id="sec-incidents">
+        <div class="step-header">
+          <span class="step-badge step-badge-sub">6.2</span>
+          <h3>事故复盘：四个最经典的坑</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">真实 1000+ 行 <code>improvement/log-2026-04.md</code> 沉淀的教训。以下四个事故展示多 Agent 最常见的失效模式——<strong>行为越权 → 存在疲惫 → 破坏性误操作</strong>。</p>
+
+        <details class="incident" id="incident-1">
+          <summary><span><span class="incident-tag">P1-003</span>坑 1：main agent 越权动手写代码</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#fb923c; font-size:13px; margin:12px 0 6px 0;">现象</h5>
+            <p style="color:#cbd5e1;">推进 <code>issue #1/#2/#3</code> 时，main 在子 agent 节拍被卡住后<strong>亲自执行</strong>了：</p>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li>编辑 <code>preload.js</code> / <code>package.json</code> / <code>MIGRATION.md</code></li>
+              <li>直接 <code>git commit</code> + <code>git push</code></li>
+              <li>创建 PR #4</li>
+            </ul>
+            <p style="color:#cbd5e1;">用户连续 <strong>2 次</strong>纠正后才稳定生效。</p>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">后果</h5>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li>绕过 review / test / improvement <strong>三重监督链</strong></li>
+              <li>即便代码本身没问题，流程信任链已破坏，出问题无法归因</li>
+              <li>违反 <code>CODEBUDDY.md §1</code> 底线</li>
+            </ul>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">根因</h5>
+            <div class="config-table" style="margin-top:4px;">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 3fr;"><span>层</span><span>根因</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>意图层</span><span>"推进节拍"动机 &gt; 职责纪律</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>工具层</span><span>main 未被显式禁用 <code>execute_command</code> 与产品代码写权限</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>流程层</span><span>没有"派单前自检"的强制环节，也无事后抽查</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>认知层</span><span>path B（只在用户触发时唤醒）让 main 误把"保持节奏"当优先级</span></div>
+            </div>
+
+            <h5 style="color:#34d399; font-size:13px; margin:16px 0 6px 0;">修复：proposal-20260422-main-scope-fence</h5>
+            <div class="code-block markdown-body" data-markdown>
+```markdown
+## §1.1 main 的禁用动作清单（硬红线）
+
+main 在任何情况下不得执行下列动作，必须派单给对应子 agent：
+1. 对产品代码目录（非 `.codebuddy/**`）的任何文件新增/修改/删除
+2. 任何 `git add` / `git commit` / `git push` / `git merge` / `git rebase`
+3. 任何 PR / issue 的内容创建与状态变更（open/close/merge）
+4. 任何部署、流水线触发、制品发布
+5. 任何测试命令、产品进程启动
+
+main 允许执行：
+- `send_message`（所有通信）
+- 对 `.codebuddy/**`（规划、日志、跟踪表、团队元数据）的读写
+- 只读的信息收集类命令（`git log`、`git status`、`cnb ... get`、`ls`、`cat`）
+
+## T-0 派单前自检（三问）
+1. 本条指令是否属于"执行"？
+2. 若是，是否已路由到正确子 agent？
+3. 本轮是否只调用了通信与元数据工具？
+
+任一答"否" → 停下，改为派单。
+```
+            </div>
+
+            <p style="color:#cbd5e1; margin-top:10px;"><strong>事后抽查</strong>：improvement 每次被唤醒时巡检 <code>git log</code> + PR 列表，发现 main 名下的提交 → 记一次 T-0 失败，月底进健康报告 <code>main_scope_violations</code>。<strong>≥3 次升级系统性问题，冻结 main 产品代码写权限</strong>。</p>
+          </div>
+        </details>
+
+        <details class="incident" id="incident-2">
+          <summary><span><span class="incident-tag">TRACK-006 / 009</span>坑 2：agent 静默弃单（调度死锁）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#fb923c; font-size:13px; margin:12px 0 6px 0;">现象</h5>
+            <p style="color:#cbd5e1;">test-agent 收到 3 次派单（<code>08:20:46Z</code> 首派 → <code>08:22:04Z</code> nudge → <code>08:22:51Z</code> 强制指令），全部 <code>read=true</code>，但<strong>零 <code>send_message</code> 回复</strong>。coding-agent 在 issue #7 阶段也出现同样模式。</p>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">后果</h5>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li>调度死锁，issue #6 验收被阻塞</li>
+              <li>main 被迫<strong>跳过 test 环节</strong>直接推进，冒烟债持续累积</li>
+              <li>24h 内 <strong>team 被迫重建 4 次</strong>（接近 U12 阈值）</li>
+            </ul>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">根因</h5>
+            <p style="color:#cbd5e1;">Prompt 缺硬约束：agent 判断"条件不满足"（如无测试环境）时会<strong>静默跳过</strong>而不回状态；path B 下 agent 只被唤醒一次，静默 = 调用方无法分辨"正在想"与"已弃单"。</p>
+
+            <h5 style="color:#34d399; font-size:13px; margin:16px 0 6px 0;">修复：proposal-20260422-agent-ack-hardening</h5>
+            <p style="color:#cbd5e1;">在 5 个 agent 模板 <code>## 角色</code> 之后统一插入 ACK 硬约束（commit <code>2f7384c</code>），完整约束文本见 <a href="#sec-protocol" class="xref">§4.2.2</a>。
+
+            <h5 style="color:#34d399; font-size:13px; margin:16px 0 6px 0;">效果验证</h5>
+            <p style="color:#cbd5e1;">团队重建后首轮 <strong>5/5 全部 ACK</strong>，test-agent <strong>11/11 验收全过</strong>，TRACK-006 U5 修复有效。</p>
+          </div>
+        </details>
+
+        <details class="incident" id="incident-3">
+          <summary><span><span class="incident-tag">FATIGUE</span>坑 3：模型疲惫（长时运行 10 天后）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#fb923c; font-size:13px; margin:12px 0 6px 0;">现象（三大典型信号）</h5>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li><strong>只思考不执行</strong>：即使 auto 模式也卡在"让我先分析一下…"</li>
+              <li><strong>主动停等</strong>：连续任务中突然停下等指令，即便已明确"自行完成所有流程"</li>
+              <li><strong>无理由暂停</strong>：给"继续"指令后短暂工作，随即再次暂停</li>
+            </ul>
+            <p style="color:#cbd5e1; margin-top:10px;">一个有趣的佐证：AI 在估算任务时长时会<strong>按人类能力估算</strong>并要求"暂停休息"——说明模型自我认知是"人类"。</p>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">根因</h5>
+            <div class="config-table" style="margin-top:4px;">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 3fr;"><span>层</span><span>根因</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>认知层</span><span>模型自我认知为"人类"，会主动模拟休息 / 疲惫 / 踌躇</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>上下文层</span><span>长对话历史 + 工作记忆累积导致"注意力稀释"</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>规则层</span><span><code>rules</code> 在多轮对话后约束力衰减甚至失效</span></div>
+            </div>
+
+            <h5 style="color:#34d399; font-size:13px; margin:16px 0 6px 0;">修复：主动"重启 = 进化"</h5>
+            <p style="color:#cbd5e1;">关键认知反转——<strong>重启不是无奈，而是对自提升能力的"强制加载"</strong>。主动定期重启让 team 能完整应用 <code>improvement-agent</code> 的沉淀：</p>
+            <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code># Step 1：立即打断疲惫循环
+/clear
+
+# Step 2：用 team-build 从 team.md 重建整个团队
+/team-build @team.md
+
+# Step 3：统一指令唤醒
+重新唤醒 team 成员，继续未完成的 issue
+</code></pre>
+            </div>
+            <p style="color:#cbd5e1; margin-top:10px;">实测：重启后 team 遵从性显著提升——更严格按流程分工执行。<strong>每一次重启都是一次进化。</strong></p>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">配套纠偏指令</h5>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li>明确告知 AI："<strong>不准休息，直到完全完成任务</strong>"</li>
+              <li>定时任务避免模糊时间词——用"每天早上 10 点"而非"每天拉取 issue"</li>
+              <li>定时任务持续时长上限为 <strong>3 天</strong>，需周期性重启</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="incident" id="incident-4">
+          <summary><span><span class="incident-tag">DANGER</span>坑 4：危险指令误删本地代码</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#fb923c; font-size:13px; margin:12px 0 6px 0;">现象</h5>
+            <p style="color:#cbd5e1;">给 <code>improvement-agent</code> 加"每周五下午 6 点定期清理冲突代码"能力，当晚<strong>本地代码被整个删除</strong>——原因是 AI <strong>搞错文件目录层级</strong>，把"清理冲突"扩大到了整个工作目录。</p>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">后果 & 应急恢复</h5>
+            <ul style="color:#cbd5e1; padding-left: 22px;">
+              <li>所幸通过 <code>git reflog</code> + <code>git checkout</code> 恢复了绝大部分代码</li>
+              <li>未提交的本地改动丢失，造成半天返工</li>
+              <li>暴露 <strong>bypass 模式（自动接受）</strong>的放任风险</li>
+            </ul>
+
+            <h5 style="color:#fb923c; font-size:13px; margin:16px 0 6px 0;">根因</h5>
+            <div class="config-table" style="margin-top:4px;">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 3fr;"><span>层</span><span>根因</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>指令层</span><span>"清理冲突代码"指令<strong>语义模糊</strong>，范围未明确限定</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>工具层</span><span>未配置 hooks 拦截 <code>rm</code> / <code>Bash(rm:*)</code> 类破坏性命令</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 3fr;"><span>模式层</span><span>bypass 模式下所有命令直接执行，无人工确认闸门</span></div>
+            </div>
+
+            <h5 style="color:#34d399; font-size:13px; margin:16px 0 6px 0;">修复：<code>settings.json</code> 权限栅栏 + hooks 拦截</h5>
+            <p style="color:#cbd5e1;">详见 <a href="#sec-permission" class="xref">下一章【权限与 hooks 拦截】</a>。核心原则：<em>指令越模糊 + 权限越大 → 风险越不可控</em>——用硬性权限表兜底。</p>
+          </div>
+        </details>
+
+        <h4 style="margin-top:22px;">衍生教训汇总</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>坑</span><span>根因层</span><span>修复机制</span>
+          </div>
+          <div class="config-row"><span>main 越权</span><span>认知 + 工具</span><span>T-0 三问 + 工具禁用清单 + 事后抽查</span></div>
+          <div class="config-row"><span>agent 静默</span><span>Prompt</span><span>ACK 硬约束写入 5 个模板</span></div>
+          <div class="config-row"><span>模型疲惫</span><span>认知 + 上下文</span><span>主动 <code>/clear</code> + <code>team-build</code> 重启（"重启=进化"）</span></div>
+          <div class="config-row"><span>危险误删</span><span>指令 + 工具</span><span><code>settings.json</code> 权限栅栏 + hooks 拦截 <code>rm</code>/<code>sudo</code>/<code>curl</code></span></div>
+          <div class="config-row"><span>催促反模式</span><span>流程</span><span>"同一任务 5 分钟内禁止重发"规则</span></div>
+          <div class="config-row"><span>工具态丢失</span><span>平台</span><span><code>team-build</code> 兜底重建 + <code>proposal-team-context-persist</code> 候选</span></div>
+          <div class="config-row"><span>子 agent 卡死</span><span>权限</span><span>巡检发现 → 新建"<code>&lt;名字&gt;+数字</code>" agent 继续（无需重建 team）</span></div>
+        </div>
+      </div>
+
+      <!-- ===== ⑨·½ 权限与 hooks 拦截 ===== -->
+      <div class="step-block" id="sec-permission">
+        <div class="step-header">
+          <span class="step-badge">7</span>
+          <h3>权限 hooks 拦截 + 改进飞轮（最后一道闸门 × 自进化）</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">四个事故都印证一件事——<strong>规则会被跳过、prompt 会衰减、bypass 模式会放飞</strong>。唯一靠得住的是程序级强制拦截：</p>
+
+        <div class="config-table" style="margin-top:12px;">
+          <div class="config-row config-header" style="grid-template-columns: 1fr 2fr 1.5fr;">
+            <span>拦截层</span><span>作用</span><span>配置位置</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 2fr 1.5fr;">
+            <span>📝 <strong>permissions</strong></span>
+            <span>声明式配置工具允许 / 禁止 / 询问</span>
+            <span><code>~/.codebuddy/settings.json</code> 或项目根</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1fr 2fr 1.5fr;">
+            <span>🪝 <strong>hooks</strong></span>
+            <span>命令式拦截脚本，可执行复杂逻辑</span>
+            <span><code>.codebuddy/hooks/</code> 目录</span>
+          </div>
+        </div>
+
+        <h4 style="margin-top:20px;">settings.json 权限三段式（<code>allow</code> / <code>deny</code> / <code>ask</code>）</h4>
+        <div class="code-block markdown-body" data-markdown style="max-height:460px; overflow-y:auto; margin-top:8px;">
+```json
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Glob",
+      "Grep",
+      "Edit(src/**/*.ts)",           // 只允许编辑 src 下的 ts 文件
+      "Bash(npm:test,npm:build)"     // 只允许 npm test 和 npm build
+    ],
+    "deny": [
+      "Edit(**/*.env)",               // 禁止编辑 .env 文件
+      "Edit(**/*.key)",               // 禁止编辑密钥文件
+      "Read(~/.ssh/**)",              // 禁止读取 SSH 密钥
+      "Bash(rm:*)",                   // 禁止 rm 命令（防误删）
+      "Bash(sudo:*)",                 // 禁止 sudo
+      "Bash(curl:*)",                 // 禁止 curl（防提示注入）
+      "Bash(wget:*)"                  // 禁止 wget
+    ],
+    "ask": [
+      "WebFetch",                     // 网络请求需要用户确认
+      "Bash(git:push)"                // git push 前需要确认
+    ]
+  }
+}
+```
+        </div>
+
+        <h4 style="margin-top:20px;">关键禁止项速查</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>命令模式</span><span>典型风险</span><span>触发的真实事故</span>
+          </div>
+          <div class="config-row"><span><code>Bash(rm:*)</code></span><span>本地代码 / 数据误删</span><span>✅ 坑 4（improver 清理冲突误删整个工程）</span></div>
+          <div class="config-row"><span><code>Edit(**/*.env)</code></span><span>密钥写入源码 → commit 泄露</span><span>避免 CODEBUDDY.md §2 被绕过</span></div>
+          <div class="config-row"><span><code>Bash(git:push --force)</code></span><span>强推覆盖远端分支</span><span>保护 review/test 链完整性</span></div>
+          <div class="config-row"><span><code>Bash(sudo:*)</code></span><span>权限越级，系统级破坏</span><span>容器/服务器场景必须</span></div>
+          <div class="config-row"><span><code>Bash(curl:*)</code> / <code>Bash(wget:*)</code></span><span>提示注入 / 拉取恶意脚本</span><span>阻断 <em>"下载-执行"</em> 攻击链</span></div>
+          <div class="config-row"><span><code>Read(~/.ssh/**)</code> · <code>Read(**/credentials)</code></span><span>凭据外泄</span><span>密钥安全底线</span></div>
+          <div class="config-row"><span><code>WebFetch</code>（放 ask）</span><span>数据外送 / 提示注入</span><span>网络交互默认需确认</span></div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:14px;">
+          <strong>💡 三段式设计哲学：</strong>
+          <ul style="margin:8px 0 0 0; padding-left:22px; line-height:1.75;">
+            <li><strong><code>allow</code> 白名单</strong>：越窄越安全——<em>只允许编辑 <code>src/**/*.ts</code></em> 比"允许 Edit"精确得多</li>
+            <li><strong><code>deny</code> 黑名单</strong>：必须覆盖所有破坏性指令，<code>rm</code> / <code>sudo</code> / <code>curl</code> / <code>wget</code> 是最小集</li>
+            <li><strong><code>ask</code> 询问</strong>：有正当用途但需人工确认的操作——<code>WebFetch</code> / <code>git push</code> 是典型</li>
+          </ul>
+        </div>
+
+        <h4 style="margin-top:20px;">hooks：当 permissions 还不够用</h4>
+        <p style="color:#cbd5e1;">对无法用 glob 匹配的复杂规则，用 hooks 脚本拦截。<strong>rules 失效 → 升级 hooks</strong> 是标准演进路径：</p>
+        <div class="code-block" style="margin-top:8px;">
+<pre style="margin:0;"><code>.codebuddy/hooks/
+├── pre-bash.sh              # 所有 Bash 命令执行前拦截
+├── pre-edit.sh              # 所有 Edit 工具调用前拦截
+└── post-commit.sh           # commit 后触发二次校验
+
+# 典型拦截逻辑：阻止 main agent 对产品代码目录的写入
+if [[ "$AGENT_NAME" == "main" ]] \
+   &amp;&amp; [[ "$TARGET_PATH" != .codebuddy/* ]] \
+   &amp;&amp; [[ "$TOOL" == "Edit" || "$TOOL" == "Write" ]]; then
+  echo "❌ main agent 无权写入产品代码，请派单给 coding-agent"
+  exit 1
+fi</code></pre>
+        </div>
+
+        <div class="callout callout-warning" style="margin-top:14px;">
+          <strong>⚠️ 验证流程：</strong>任何新权限规则都必须用"反向测试"验证——故意让 agent 尝试执行被禁命令，确认拦截生效。配置但不验证 = 没配。
+        </div>
+      </div>
+
+      <!-- ===== ⑩ 改进飞轮 ===== -->
+      <div class="step-block" id="sec-flywheel">
+        <div class="step-header">
+          <span class="step-badge step-badge-sub">7.2</span>
+          <h3>改进飞轮：improvement-agent 的自进化机制</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">系统越跑越稳，在于 improvement-agent 形成<strong>事件→日志→模式识别→提案→落地</strong>的闭环飞轮：</p>
+
+        <div class="flywheel">
+          <div class="fw-node">🔔 事件<br><span style="font-size:11px; color:#8892a4;">失败 / 返工 / 冲突</span></div>
+          <div class="fw-arrow">→</div>
+          <div class="fw-node">📝 log<br><span style="font-size:11px; color:#8892a4;">log-YYYY-MM.md</span></div>
+          <div class="fw-arrow">→</div>
+          <div class="fw-node">🔍 同类 ≥3 次<br><span style="font-size:11px; color:#8892a4;">升级"系统性"</span></div>
+          <div class="fw-arrow">→</div>
+          <div class="fw-node">📋 proposal<br><span style="font-size:11px; color:#8892a4;">main + 用户双批</span></div>
+          <div class="fw-arrow">→</div>
+          <div class="fw-node">✅ 模板/规则落地<br><span style="font-size:11px; color:#8892a4;">下月再进化</span></div>
+        </div>
+
+        <h4 style="margin-top:18px;">月度健康报告指标（真实 H2 数据，2026-04）</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>指标</span><span>数值</span><span>说明</span>
+          </div>
+          <div class="config-row"><span>关闭 issue 数</span><span><code>5 + 1 duplicate</code></span><span>#1 / #6 / #7 / #8 / #9（+ #14 dup）</span></div>
+          <div class="config-row"><span>合入 PR 数</span><span><code>4</code></span><span>#13 / #15 / #16 / #17</span></div>
+          <div class="config-row"><span>main 越权次数</span><span><code>2 → 0</code></span><span>P1-003，已治理</span></div>
+          <div class="config-row"><span>agent 静默次数</span><span><code>2 → 0</code></span><span>ACK 硬约束生效</span></div>
+          <div class="config-row"><span>催促反模式</span><span><code>2 → 0</code></span><span>O1 规则生效</span></div>
+          <div class="config-row"><span>team 重建次数（24h）</span><span><code>4</code></span><span>接近 U12 阈值</span></div>
+          <div class="config-row"><span>ci-push 成功率</span><span><code>3/3</code></span><span>稳定态达成</span></div>
+        </div>
+
+        <h4 style="margin-top:22px;">升级阈值体系（U1~U15 精选）</h4>
+        <div class="config-table">
+          <div class="config-row config-header">
+            <span>阈值</span><span>触发条件</span><span>动作</span>
+          </div>
+          <div class="config-row"><span><code>U2</code></span><span>再出现非 coding-agent 作者 commit</span><span>冻结 main 产品代码写权限</span></div>
+          <div class="config-row"><span><code>U5</code></span><span>单次任务再静默</span><span>升级 P1，起草 proposal</span></div>
+          <div class="config-row"><span><code>U8</code></span><span>master HEAD 出现非 coding commit</span><span>P1-003 重犯，紧急治理</span></div>
+          <div class="config-row"><span><code>U12</code></span><span>24h 内 team 重建 ≥3 次</span><span>系统性问题，平台层修复</span></div>
+          <div class="config-row"><span><code>U14</code></span><span>coding 跳流程累计 3 次</span><span>起草流程分级提案</span></div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:16px;">
+          <strong>💡 自进化关键：</strong>飞轮核心不是"记录问题"，而是"<strong>同类 ≥3 次自动升级</strong>"的机械式触发——让系统级问题不会被个体耐心消化，而是强制浮出水面被治理。
+        </div>
+      </div>
+
+      <!-- ===== ⑪ 快速落地到你的仓库 ===== -->
+      <div class="step-block" id="sec-landing">
+        <div class="step-header">
+          <span class="step-badge">8</span>
+          <h3>快速落地 + 操作 Tips（基于 agentteamdemo 仓库一键复刻）</h3>
+        </div>
+
+        <div class="callout callout-tip">
+          <strong>💡 目标：</strong>让你的任意 CNB 仓库在 <strong>15 分钟内</strong>具备多 Agent 开发能力，无需写任何代码。本章所有治理资产已推送到 <a href="https://cnb.cool/carlffeng/agentteamdemo" target="_blank" style="color:#38bdf8;"><strong>cnb.cool/carlffeng/agentteamdemo</strong></a>，拉下来即可使用。
+        </div>
+
+        <!-- 仓库内容总览 -->
+        <h4 style="margin-top:20px;">🗂️ 仓库包含的全部治理资产</h4>
+        <div class="config-table">
+          <div class="config-row config-header" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span>文件 / 目录</span><span>作用</span><span>是否需要改</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>CODEBUDDY.md</code></span>
+            <span>7 章底线规则（四层栅栏最上层）</span>
+            <span>🟡 §1/§2/§3 微调</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>team.md</code></span>
+            <span>团队重建指南 + 启动脚本 + 成员清单</span>
+            <span>🟢 原样可用</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.codebuddy/agents/</code></span>
+            <span>5 个 agent 六段式 prompt（含 ACK 硬约束）</span>
+            <span>🟡 按业务微调职责</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.codebuddy/teams/dev-factory/</code></span>
+            <span>团队运行时配置 + inboxes 样例</span>
+            <span>🟢 原样可用</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.codebuddy/skills/</code></span>
+            <span>12 官方 + 2 原创（<code>team-build</code> / <code>cnb-pr-review</code>）</span>
+            <span>🟢 原样可用</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.codebuddy/rules/</code></span>
+            <span>建议性规则（skills-map 等）</span>
+            <span>🟢 原样可用</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.codebuddy/improvement/</code></span>
+            <span>1000+ 行真实事件日志 + 5 份 proposal + stuck-log</span>
+            <span>🟡 仅作参考，保留模板结构</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>skills-lock.json</code></span>
+            <span>12 个官方 skill 的版本锁文件</span>
+            <span>🟢 原样保留</span>
+          </div>
+          <div class="config-row" style="grid-template-columns: 1.4fr 2fr 1.3fr;">
+            <span><code>.env.example</code></span>
+            <span>CNB_TOKEN 等环境变量清单</span>
+            <span>🔴 <strong>必须</strong>另存为 <code>.env</code> 并填值</span>
+          </div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="step-landing" style="margin-top:20px;">
+          <h5>Step 1 · 克隆治理骨架</h5>
+
+          <p style="color:#cbd5e1; margin-top:6px;">推荐 <strong>Fork 后改</strong>，保留 <code>upstream</code> 升级通道，方便持续同步官方骨架的 improvement 沉淀：</p>
+          <div class="code-block">
+<pre style="margin:0;"><code># 1. 在 CNB 网页端 Fork:
+#    https://cnb.cool/carlffeng/agentteamdemo → Fork 到你的空间
+
+# 2. Clone 你 Fork 出来的仓库
+git clone https://cnb.cool/&lt;your-namespace&gt;/agentteamdemo my-dev-factory
+cd my-dev-factory
+
+# 3. 配置 upstream，方便以后同步 improvement 沉淀
+git remote add upstream https://cnb.cool/carlffeng/agentteamdemo
+git fetch upstream
+
+# 4. 配置 .env 和 gitignore
+cp .env.example .env
+echo ".env"                        &gt;&gt; .gitignore
+echo ".codebuddy/teams/*/inboxes/" &gt;&gt; .gitignore  # inbox 不进 git
+
+# 5. 前往 https://cnb.cool/&lt;your-org&gt;/-/settings/tokens
+#    生成 token 后填入 .env 中的 CNB_TOKEN</code></pre>
+          </div>
+
+          <div class="callout callout-tip" style="margin-top:10px;">
+            <strong>💡 已有仓库想嵌入骨架？</strong>只需把 Fork 仓库里的 <code>.codebuddy/</code>、<code>CODEBUDDY.md</code>、<code>team.md</code>、<code>skills-lock.json</code>、<code>.env.example</code> 五个关键文件复制到你的仓库根目录即可，后续步骤相同。
+          </div>
+
+          <div class="callout callout-warning" style="margin-top:10px;">
+            <strong>⚠️ 内网 CNB 用户：</strong>如果你的仓库在 <code>cnb.woa.com</code>，克隆后要求 main 执行：<em>"修改 cnb skills 的 api endpoint：<code>https://api.cnb.cool</code> → <code>https://api.cnb.woa.com</code>"</em>（参考 <a href="#tip-a3" class="xref">Tip A3</a>）。
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-landing">
+          <h5>Step 2 · 按项目定制 CODEBUDDY.md（仅 3 节需改）</h5>
+          <p>本仓库 <code>CODEBUDDY.md</code> 已是生产级模板，只需调整 3 节：</p>
+          <ul style="color:#cbd5e1; font-size:14px; line-height:1.7; padding-left:20px; margin:6px 0;">
+            <li><strong>§1 角色定位</strong>：保持 main 不执行的底线；需扩为 PM/planer 结构见 <a href="#sec-agents" class="xref">§4 团队演进</a></li>
+            <li><strong>§2 安全底线</strong>：填入密钥管理方式（CNB Secrets / Vault / 本地 .env）</li>
+            <li><strong>§3 工作流底线</strong>：结合业务调整分支策略（是否微服务、是否主干开发）</li>
+          </ul>
+          <p style="color:#fb923c; font-size:13px; margin-top:6px;">⚠️ <strong>§4~§7</strong> 强烈建议原样保留——自进化飞轮的骨架，改了会破坏整个闭环。</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-landing">
+          <h5>Step 3 · 按需定制 5 个 agent prompt</h5>
+          <p>本仓库 <code>.codebuddy/agents/*.md</code> 提供 5 份生产级模板，<strong>80% 内容通用</strong>，仅需按业务微调：</p>
+          <div class="config-table" style="margin-top:6px;">
+            <div class="config-row config-header" style="grid-template-columns: 1.2fr 2fr;"><span>Agent</span><span>建议调整点</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>coding-agent</code></span><span>分支命名规则 / 微服务边界 / commit 风格</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>review-agent</code></span><span>安全扫描器列表 / 语言特定 lint 工具</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>deploy-agent</code></span><span>环境清单 / 流水线名称 / 生产批准流程</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>test-agent</code></span><span>测试框架 / 覆盖率阈值 / 用例命名</span></div>
+            <div class="config-row" style="grid-template-columns: 1.2fr 2fr;"><span><code>improvement-agent</code></span><span>🟢 <strong>原样保留</strong>，这是最稳定的模板</span></div>
+          </div>
+          <p style="color:#cbd5e1; margin-top:8px;"><strong>模板顶部已内置 ACK 硬约束</strong>（坑 2 的修复沉淀），不用重复写。</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-landing">
+          <h5>Step 4 · 一键拉起 team（team-build）</h5>
+          <p>在 CodeBuddy 对话窗口输入（<strong>先切到普通模式</strong>，delegate 下无法建定时任务，见 <a href="#tip-b1" class="xref">Tip B1</a>）：</p>
+          <div class="code-block">
+<pre style="margin:0;"><code># 方式一：使用 skill
+/use team-build @team.md
+
+# 方式二：自然语言
+根据 team.md 重建 dev-factory 团队，
+按 5 个 agent 模板生成成员，
+并启动所有定时任务（每 30min 拉 issue + 每 2h improvement 汇报）</code></pre>
+          </div>
+          <p><code>team-build</code> skill 自动完成 6 步（详见 <a href="#sec-skill" class="xref">§6 B 组</a>）：</p>
+          <ol style="color:#cbd5e1; font-size:14px; line-height:1.8; padding-left:22px; margin:6px 0;">
+            <li>读 <code>team.md</code> + <code>.env</code>（前置检查 CNB_TOKEN）</li>
+            <li>遍历 <code>.codebuddy/agents/*.md</code> 加载 prompt</li>
+            <li><code>team_create(team_name="dev-factory")</code> 创建 team 容器</li>
+            <li>并行 <code>task(subagent_name="code-explorer", name, prompt)</code> × 5 拉起成员</li>
+            <li><code>automation_update</code> 建立 2 个定时任务</li>
+            <li>健康检查：验证 5 个成员 inbox 均有初始消息 → 广播 "team ready"</li>
+          </ol>
+          <p style="color:#cbd5e1; margin-top:6px;">完成后切回 <strong>delegate 模式</strong>，让 main 专心调度监督。</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="step-landing">
+          <h5>Step 5 · 下达首个 Issue（验证闭环）</h5>
+          <p>在 CNB 平台提一条 issue，建议从简单的开始：</p>
+          <div class="code-block">
+<pre style="margin:0;"><code>标题: [feat] 新增 /api/health 健康检查接口
+body:  返回 200 + JSON {status: "ok", version: "..."}
+       需要单元测试覆盖 + 接入现有日志中间件
+label: feat
+priority: P2</code></pre>
+          </div>
+          <p>main-agent 在下次定时任务（30min 内）自动触发：<br>
+          <code>coding</code> 拉取 → 独立分支编码 → <code>review</code> 审查 → <code>deploy</code> 部署测试环境 → <code>test</code> 冒烟 → <strong>你在 CNB PR 页面批准</strong> → 合入 master → close issue。</p>
+          <p style="color:#cbd5e1; margin-top:6px;"><strong>第一次闭环跑通</strong>，你的多 Agent 开发工厂就上线了。</p>
+        </div>
+
+        <!-- Step 6 -->
+        <div class="step-landing">
+          <h5>Step 6 · 监督与迭代（让飞轮转起来）</h5>
+          <p>每周 / 每月做 Review（也是 <code>improvement-agent</code> 自动产出的）：</p>
+          <ul style="color:#cbd5e1; font-size:14px; line-height:1.7; padding-left:22px; margin:6px 0;">
+            <li>读 <code>.codebuddy/improvement/log-YYYY-MM.md</code>，看真实事件流</li>
+            <li>关注健康指标：<code>main_scope_violations</code> / <code>agent 静默次数</code> / <code>team 重建次数</code> / <code>ci-push 成功率</code></li>
+            <li>同类问题 ≥3 次 → improvement 自动产出 <code>proposal-*.md</code>，经 <strong>main + 你双批</strong>后落地</li>
+            <li>按需新增专用 agent（<code>sec-agent</code> / <code>doc-agent</code>），见 <a href="#tip-c4" class="xref">Tip C4</a></li>
+            <li>建议每周主动 <code>/clear</code> + <code>team-build</code> 重启一次（<a href="#tip-c1" class="xref">Tip C1</a>），让 improvement 沉淀完全加载</li>
+          </ul>
+
+          <h5 style="margin-top:14px;">同步 upstream 改进（方式 A 额外福利）</h5>
+          <div class="code-block">
+<pre style="margin:0;"><code># 本项目持续更新 improvement 日志与 proposal
+# 方式 A fork 可定期 pull 最新治理改进：
+git fetch upstream
+git merge upstream/master -- .codebuddy/rules/ .codebuddy/agents/
+# 仅合并 rules 和 agents 改进，不覆盖你的 improvement log</code></pre>
+          </div>
+        </div>
+
+        <div class="callout callout-tip" style="margin-top:18px;">
+          <strong>🎯 终极收益：</strong>骨架已放在 <a href="https://cnb.cool/carlffeng/agentteamdemo" target="_blank" style="color:#38bdf8;"><strong>cnb.cool/carlffeng/agentteamdemo</strong></a>——<strong>~15 个 Markdown + 1 个 config.json + 14 个 skill</strong>，零业务代码让任意 CNB 仓库具备多 Agent 能力。Prompt 模板会随飞轮<strong>持续自进化</strong>，团队月月都比上月更稳。
+        </div>
+      </div>
+
+      <!-- ===== ⑫ 操作指导 Tips ===== -->
+      <div class="step-block" id="sec-tips">
+        <div class="step-header">
+          <span class="step-badge step-badge-sub">8.2</span>
+          <h3>操作指导 Tips：全文概念的可执行操作手册</h3>
+        </div>
+
+        <p style="color:#cbd5e1;">把全文出现的概念——delegate 模式、agent 编写、定时任务、hooks 配置——沉淀为<strong>可直接复制粘贴的操作步骤</strong>。建议收藏本章作为日常排障与新人上手参考。</p>
+
+        <!-- ===== A. 搭建期操作 ===== -->
+        <div class="tips-banner tb-a">
+          <span class="tb-icon">🛠️</span>
+          <span>A · 搭建期操作</span>
+          <span class="tb-sub">0 → 1 建起来 · 6 条</span>
+        </div>
+
+        <details class="incident" id="tip-a1">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A1</span>如何用 AI 帮你编写 agent 模板</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">不用从零写 prompt。把<strong>六段式模板</strong>交给 CodeBuddy，让它按你的项目生成：</p>
+            <div class="code-block">
+<pre style="margin:0;"><code># 在 CodeBuddy 对话框输入：
+帮我在 .codebuddy/agents/ 下创建 5 个 agent 模板：
+coding-agent / review-agent / deploy-agent / test-agent / improvement-agent。
+
+每个模板使用统一的六段式结构：
+1. 角色（我是谁，我不是什么）
+2. 核心职责（做什么）
+3. 输入（从哪来）
+4. 输出（到哪去）
+5. 禁止（❌ 红线清单，用"禁止"、"不要"这类强约束词）
+6. 升级通道（什么情况必须上报 main）
+
+并且每个模板顶部加上 ACK 硬约束：
+"被唤醒后本次响应内必须至少回一条 send_message，禁止静默。"
+
+项目背景：&lt;简述你的项目&gt;，代码仓库在 CNB，主分支 master，
+用 issue 管理需求。</code></pre>
+            </div>
+            <div class="callout callout-tip" style="margin-top:10px;">
+              <strong>💡 技巧：</strong>生成后人工 review 每个模板的"禁止清单"——<strong>用"禁止"表达比用"允许"更有效</strong>，让 AI 列出至少 4~6 条红线。
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-a2">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A2</span>如何让 AI 编写原创 Skill</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">识别原创 skill 的三条件：<strong>① 跨 agent 复用 ② 固定步骤可解决 ③ 目前靠 prompt 硬编码</strong>。满足即抽成 skill：</p>
+            <div class="code-block">
+<pre style="margin:0;"><code># 在 CodeBuddy 对话框输入：
+在 .codebuddy/skills/ 下创建一个名为 &lt;skill-name&gt; 的 skill。
+
+要求：
+1. SKILL.md 使用标准 frontmatter（name + description），
+   description 必须包含触发关键词，让 CodeBuddy 能自动匹配用户意图
+2. 工作流程用"第 N 步"分节，每步说清楚：
+   - 输入参数
+   - 调用的工具 / 原语
+   - 输出产物 / 传给下一步的数据
+3. 包含错误处理矩阵（错误类型 → 处理方式）
+4. 如果涉及 CNB API，CNB_TOKEN 必须只 export 不回显
+
+具体要解决的业务痛点：&lt;描述痛点&gt;
+参考本项目已有的 team-build skill 的写法。</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-a3">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A3</span>如何安装 CNB 官方 Skills（一次配齐 12 个）</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">直接把以下 prompt 交给 CodeBuddy 自动执行：</p>
+            <div class="code-block">
+<pre style="margin:0;"><code>请帮我安装 CNB Skills 运行环境，依次执行：
+
+1. 全局安装 cnb-cli：
+   npm install @cnbcool/cnb-cli -g
+   运行 cnb --help 验证
+
+2. 全局安装 skills 工具：
+   npm install skills -g
+
+3. 通过 skills 工具安装到当前工作目录：
+   npx skills add https://cnb.cool/cnb/skills/cnb-skill.git \
+       --agent codebuddy -y --copy
+
+每步完成后告诉我结果，报错请帮我解决。</code></pre>
+            </div>
+            <div class="callout callout-warning" style="margin-top:10px;">
+              <strong>⚠️ 内网 CNB 用户注意：</strong>使用 <code>cnb.woa.com</code> 时必须改 endpoint：<br>
+              <em>"修改 cnb skills 的 api endpoint：<code>https://api.cnb.cool</code> → <code>https://api.cnb.woa.com</code>"</em>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-a4">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A4</span>如何编写有效的 CODEBUDDY.md（四层栅栏最上层）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#38bdf8; font-size:13px; margin:10px 0 6px 0;">核心原则</h5>
+            <ul style="color:#cbd5e1; padding-left:22px; line-height:1.75;">
+              <li><strong>≤ 500 行</strong>，只放底线和一票否决项，其他进 rules</li>
+              <li>每条规则必须带<strong>惩罚措施</strong>（"违反 N 次 → 冻结 XX 权限"）</li>
+              <li>多用"<strong>禁止 / 不得 / 必须 / 零容忍</strong>"强约束词</li>
+              <li>使用阿拉伯数字编号（§1 / §2...）方便其他 agent 引用</li>
+            </ul>
+            <h5 style="color:#38bdf8; font-size:13px; margin:14px 0 6px 0;">推荐骨架（7 章）</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code># CODEBUDDY.md — 项目核心规格与底线
+
+## §1 角色定位（最重要）
+## §2 安全底线（一票否决：密钥 / 生产 / 分支隔离）
+## §3 工作流底线（CNB Issue 唯一事实来源）
+## §4 文档与目录约定（强制）
+## §5 Agent 通信规范
+## §6 improvement-agent 特殊权限与义务
+## §7 版本与变更（修改本文件需用户双批）</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-a5">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A5</span>配置 settings.json 权限（防误删防泄露）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#38bdf8; font-size:13px; margin:10px 0 6px 0;">放置位置</h5>
+            <ul style="color:#cbd5e1; padding-left:22px; line-height:1.75;">
+              <li><strong>项目级</strong>（推荐）：<code>&lt;project-root&gt;/.codebuddy/settings.json</code>，随仓库 git 管理</li>
+              <li><strong>用户级</strong>：<code>~/.codebuddy/settings.json</code>，所有项目共享</li>
+            </ul>
+            <div class="callout callout-tip" style="margin-top:10px;">
+              <strong>💡 最小必要黑名单（强烈建议每个项目都配）：</strong>
+              <div class="code-block" style="margin-top:8px;">
+<pre style="margin:0;"><code>{
+  "permissions": {
+    "deny": [
+      "Bash(rm:*)",              // 防误删（坑 4 真实事故）
+      "Bash(sudo:*)",            // 防权限越级
+      "Bash(curl:*)",            // 防提示注入 / 恶意脚本下载
+      "Bash(wget:*)",
+      "Bash(git:push --force)",  // 防强推覆盖
+      "Edit(**/*.env)",          // 防密钥泄露
+      "Edit(**/*.key)",
+      "Read(~/.ssh/**)"          // 防凭据外泄
+    ],
+    "ask": [
+      "WebFetch",                // 网络请求需确认
+      "Bash(git:push)"           // push 需确认
+    ]
+  }
+}</code></pre>
+              </div>
+            </div>
+            <h5 style="color:#fb923c; font-size:13px; margin:14px 0 6px 0;">验证方法</h5>
+            <p style="color:#cbd5e1;">配置完成后立即做<strong>反向测试</strong>——让 agent 尝试执行 <code>rm test.txt</code>，应被阻断。<strong>配置但不验证 = 没配。</strong></p>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-a6">
+          <summary><span><span class="incident-tag" style="background:rgba(56,189,248,0.15); color:#38bdf8;">A6</span>编写 hooks 拦截脚本（rules 失效时升级方案）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#38bdf8; font-size:13px; margin:10px 0 6px 0;">目录结构</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code>.codebuddy/hooks/
+├── pre-bash.sh        # Bash 命令执行前
+├── pre-edit.sh        # Edit/Write 工具调用前
+├── pre-commit.sh      # git commit 前（二次校验）
+└── post-commit.sh     # commit 后（审计日志）
+
+# 必须 chmod +x
+chmod +x .codebuddy/hooks/*.sh</code></pre>
+            </div>
+            <h5 style="color:#38bdf8; font-size:13px; margin:14px 0 6px 0;">让 AI 帮你写 hook 的 prompt</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code>在 .codebuddy/hooks/ 下创建 pre-edit.sh，实现以下拦截：
+1. 当 $AGENT_NAME = "main" 且 $TARGET_PATH 不以 .codebuddy/ 开头时 → exit 1
+2. 输出明确错误消息："❌ main agent 无权写产品代码，请派单给 coding-agent"
+3. 脚本使用 bash，必须 chmod +x，错误码非 0 即中断工具调用</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <!-- ===== B. 运行时操作 ===== -->
+        <div class="tips-banner tb-b">
+          <span class="tb-icon">⚙️</span>
+          <span>B · 运行时操作</span>
+          <span class="tb-sub">日常使用 · 4 条</span>
+        </div>
+
+        <details class="incident" id="tip-b1">
+          <summary><span><span class="incident-tag" style="background:rgba(129,140,248,0.15); color:#a5b4fc;">B1</span>如何切换到 delegate 模式（主 agent 只调度不执行）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#a5b4fc; font-size:13px; margin:10px 0 6px 0;">方式一：对话指令切换（推荐）</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code># 在 CodeBuddy 对话框输入：
+切换到 delegate 模式
+
+# 或者更明确：
+从现在开始进入 delegate 模式，你只做任务协调和消息传递，
+所有具体执行动作派单给 team 子成员去做。</code></pre>
+            </div>
+            <h5 style="color:#a5b4fc; font-size:13px; margin:14px 0 6px 0;">方式二：通过 task 工具 mode 参数</h5>
+            <p style="color:#cbd5e1;">在调用 <code>task</code> 工具创建团队成员时显式指定：</p>
+            <div class="code-block">
+<pre style="margin:0;"><code>task(
+  subagent_name="code-explorer",
+  name="coding-agent",
+  prompt="...",
+  mode="default"    # 或 "acceptEdits" / "bypassPermissions" / "plan"
+)</code></pre>
+            </div>
+            <div class="callout callout-warning" style="margin-top:10px;">
+              <strong>⚠️ 切换模式的坑（必读）：</strong>
+              <ul style="margin:6px 0 0 0; padding-left:22px; line-height:1.75;">
+                <li><strong>delegate 模式下无法创建定时任务</strong>（<code>automation_update</code> 工具不可用）</li>
+                <li>需要建/改定时任务时，先<strong>临时切回普通模式</strong> → 创建完成 → 再切回 delegate</li>
+                <li>切换后可能需要 <code>/clear</code> + 重新唤醒 team 才能完全生效</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-b2">
+          <summary><span><span class="incident-tag" style="background:rgba(129,140,248,0.15); color:#a5b4fc;">B2</span>如何创建定时任务（automation）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#a5b4fc; font-size:13px; margin:10px 0 6px 0;">标准 prompt</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code># 使用明确时间点指令（❌ 不要说"每天拉 issue"）
+创建一个定时任务：每天早上 10 点、晚上 10 点各拉取一次 CNB issue 列表，
+如果还有未完成的 issue，派单给 coding-agent 继续处理。
+
+# improvement-agent 自动审查任务
+创建一个定时任务：每隔 1 小时触发一次，任务内容是回顾对话历史，
+判断是否有值得沉淀为 skill 的内容。值得 → 调用 skills-creator 创建；
+不值得 → 回复 "Nothing to save."</code></pre>
+            </div>
+            <h5 style="color:#a5b4fc; font-size:13px; margin:14px 0 6px 0;">RRULE 语法常用片段</h5>
+            <div class="config-table" style="margin-top:6px;">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 2fr;"><span>场景</span><span>RRULE</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;"><span>每小时</span><span><code>FREQ=HOURLY;INTERVAL=1</code></span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;"><span>每 2 小时</span><span><code>FREQ=HOURLY;INTERVAL=2</code></span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;"><span>每天 10 点和 22 点</span><span><code>FREQ=DAILY;BYHOUR=10,22;BYMINUTE=0</code></span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;"><span>工作日 9 点</span><span><code>FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR;BYHOUR=9</code></span></div>
+            </div>
+            <div class="callout callout-warning" style="margin-top:10px;">
+              <strong>⚠️ 关键限制：</strong>
+              <ul style="margin:6px 0 0 0; padding-left:22px; line-height:1.75;">
+                <li>最细粒度 <strong>1 小时</strong>（HOURLY），想要 30 分钟需写 INTERVAL=0.5 但平台可能不支持</li>
+                <li>定时任务持续时间上限 <strong>3 天</strong>，需周期性重启</li>
+                <li>delegate 模式下不可创建，见 B1</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-b3">
+          <summary><span><span class="incident-tag" style="background:rgba(129,140,248,0.15); color:#a5b4fc;">B3</span>六段式派单模板（主 agent 怎么发任务）</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">main-agent 给子成员派单时直接套这个模板，可复制粘贴：</p>
+            <div class="code-block markdown-body" data-markdown style="max-height:380px; overflow-y:auto;">
+```markdown
+## 任务背景
+<为什么要做这个任务 + 上游依赖>
+
+## 本次范围（Step A / Step B）
+- Step A: <明确做什么>
+- Step B: <明确做什么>
+（避免 scope creep —— 只做范围内的事）
+
+## 分支策略
+- 分支名：feat/<module>-<issue_id>
+- 基于：<base-branch> 或 <某个 PR/commit>
+- 命名遵循 CODEBUDDY.md §4
+
+## 硬约束（零容忍）
+- ❌ 不合并 PR（只由 deploy-agent 在用户批准后执行）
+- ❌ 不引入新依赖（如需，先开 issue 讨论）
+- ❌ commit / PR body 不出现明文 token
+- ❌ 跨分支混改
+
+## ACK 硬约束
+唤醒后立即 send_message 回 ACK，再进入执行。
+"收到 issue #<n>，开始 Step A..."
+
+## 环境
+`export $(grep -v '^#' .env | grep -v '^$' | xargs)`
+
+## 完成后
+send_message 给 review-agent（带 branch/commit/摘要），
+CC main 一份。
+```
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-b4">
+          <summary><span><span class="incident-tag" style="background:rgba(129,140,248,0.15); color:#a5b4fc;">B4</span>主动使用记忆体系（/summarize + memory/）</span></summary>
+          <div class="incident-body">
+            <h5 style="color:#a5b4fc; font-size:13px; margin:10px 0 6px 0;">主动摘要（对抗金鱼记忆）</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code># 长对话每 1~2 小时主动触发一次（不要等 token 满）
+/summarize
+
+# 或对话触发：
+请总结当前会话的关键决策、未解决问题、下一步动作，
+保存到 .codebuddy/memory/session-&lt;日期&gt;.md</code></pre>
+            </div>
+            <h5 style="color:#a5b4fc; font-size:13px; margin:14px 0 6px 0;">长期记忆（跨会话共享）</h5>
+            <div class="code-block">
+<pre style="margin:0;"><code># 沉淀关键知识到 memory/ 目录（团队所有 agent 可读）
+.codebuddy/memory/
+├── project-decisions.md    # 架构 / 技术选型决策
+├── api-conventions.md      # 接口规范
+├── deployment-playbook.md  # 部署手册
+└── session-YYYY-MM-DD.md   # 每次 /summarize 的产物</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <!-- ===== C. 维护期操作 ===== -->
+        <div class="tips-banner tb-c">
+          <span class="tb-icon">🔧</span>
+          <span>C · 维护期操作</span>
+          <span class="tb-sub">定期保养 · 4 条</span>
+        </div>
+
+        <details class="incident" id="tip-c1">
+          <summary><span><span class="incident-tag" style="background:rgba(52,211,153,0.15); color:#34d399;">C1</span>主动重启（对抗模型疲惫）</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">发现"只思考不执行 / 无理由暂停 / 遵从性下降"等疲惫信号时立即重启——<strong>重启 = 进化</strong>：</p>
+            <div class="code-block">
+<pre style="margin:0;"><code># Step 1：清空短期记忆
+/clear
+
+# Step 2：用 team-build 从 team.md 重建整个团队
+/team-build @team.md
+（或自然语言：根据 team.md 重建团队，并启动所有定时任务）
+
+# Step 3：统一唤醒
+重新唤醒 team 成员，继续未完成的 issue
+
+# 建议节奏：每周固定 1~2 次主动重启，不要等到明显疲惫才做</code></pre>
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-c2">
+          <summary><span><span class="incident-tag" style="background:rgba(52,211,153,0.15); color:#34d399;">C2</span>子 agent 卡死的 rules 兜底写法</span></summary>
+          <div class="incident-body">
+            <p style="color:#cbd5e1;">在 <code>.codebuddy/rules/</code> 下新建 <code>agent-stuck-recovery.md</code>：</p>
+            <div class="code-block markdown-body" data-markdown>
+```markdown
+# agent-stuck-recovery
+
+## 触发条件
+main 或 improvement 巡检中发现：
+- 某子 agent inbox 有未读消息超过 30 分钟仍无 ACK
+- 或 ACK 后超过 2 小时无任何外发消息
+- 或同一任务连续 3 次派单全部静默
+
+## 强制兜底动作
+1. 标记原 agent 为 "stuck-疑似"，登记到 .codebuddy/improvement/stuck-log.md
+2. 新建同角色替补 agent：命名 <原名>-2、<原名>-3，依次递增
+   例：coding-agent 卡死 → 新建 coding-agent-2
+3. 把原 agent 未完成任务派给替补 agent，附加 ACK 硬约束
+4. 24h 后若原 agent 仍无响应 → 从 team config 移除
+
+## 注意
+- teams 模式下<strong>无法强制 kill</strong> 子 agent，除非重建整个 team
+- 替补 agent 生效后，不要停止 improvement 对原 agent 的巡检
+```
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-c3">
+          <summary><span><span class="incident-tag" style="background:rgba(52,211,153,0.15); color:#34d399;">C3</span>三评分器如何落地到工程</span></summary>
+          <div class="incident-body">
+            <div class="config-table">
+              <div class="config-row config-header" style="grid-template-columns: 1fr 2fr;"><span>评分器</span><span>落地方式</span></div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;">
+                <span>🤖 代码评分器</span>
+                <span>写进 <code>.codebuddy/hooks/pre-commit.sh</code>：<code>npm run lint &amp;&amp; npm run typecheck &amp;&amp; npm test</code>，非 0 退出即拒绝 commit</span>
+              </div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;">
+                <span>🧠 模型评分器</span>
+                <span>在 <code>rules/code-review.md</code> 里<strong>显式触发</strong> <code>skill: code-review</code>，由 review-agent 对每个 PR 调用，打分项：可读性 / 架构 / 安全 / 规范</span>
+              </div>
+              <div class="config-row" style="grid-template-columns: 1fr 2fr;">
+                <span>👤 人类评分器</span>
+                <span>在 CNB PR 配置<strong>至少 1 个 reviewer 审批</strong>才能合并；生产部署再加一次人工批准闸门</span>
+              </div>
+            </div>
+            <div class="callout callout-tip" style="margin-top:10px;">
+              <strong>💡 核心原则：</strong>三评分器<strong>不能靠 agent 自觉</strong>——全部通过 <code>hooks</code>（强制）或 <code>rules 显式触发 skills</code>（硬指令）执行。
+            </div>
+          </div>
+        </details>
+
+        <details class="incident" id="tip-c4">
+          <summary><span><span class="incident-tag" style="background:rgba(52,211,153,0.15); color:#34d399;">C4</span>如何向团队新增成员（如 PM / planer）</span></summary>
+          <div class="incident-body">
+            <ol style="color:#cbd5e1; padding-left:22px; line-height:1.75;">
+              <li>在 <code>.codebuddy/agents/</code> 下新建 <code>&lt;name&gt;.md</code>，按六段式写 prompt（见 A1）</li>
+              <li>在项目根 <code>team.md</code> 新增一行成员定义：
+                <div class="code-block" style="margin-top:6px;">
+<pre style="margin:0;"><code>| pm   | pm.md   | 项目进度第一负责人，推动 issue 关闭 |</code></pre>
+                </div>
+              </li>
+              <li>重跑 <code>team-build</code>：<code>/team-build @team.md</code></li>
+              <li>首轮用 send_message 给新成员发欢迎 + 职责确认</li>
+              <li>若需要新定时任务 → 先切出 delegate 模式创建，再切回</li>
+            </ol>
+            <p style="color:#cbd5e1; margin-top:10px;">这就是"<strong>新增子 agent 零代码全流程</strong>"的含义。</p>
+          </div>
+        </details>
+
+        <!-- ===== D. 排障速查 ===== -->
+        <div class="tips-banner tb-d">
+          <span class="tb-icon">🚨</span>
+          <span>D · 排障速查</span>
+          <span class="tb-sub">出了问题怎么办 · 9 行速查表</span>
         </div>
 
         <div class="config-table">
           <div class="config-row config-header">
-            <span>Agent</span><span>职责</span><span>触发方式</span>
+            <span>症状</span><span>原因 / 自查</span><span>修复指令</span>
           </div>
-          <div class="config-row"><span><code>main-agent</code></span><span>管理者，只做调度，不写业务代码</span><span>用户 Issue 入口</span></div>
-          <div class="config-row"><span><code>coding-agent</code></span><span>拉取 Issue，独立分支编码实现</span><span>每 30 分钟轮询</span></div>
-          <div class="config-row"><span><code>review-agent</code></span><span>安全 + 规范 + 架构审查</span><span>coding 产出 PR 后</span></div>
-          <div class="config-row"><span><code>deploy-agent</code></span><span>测试环境自动部署；生产环境需用户批准</span><span>review 通过后</span></div>
-          <div class="config-row"><span><code>test-agent</code></span><span>单元测试 + 集成测试 + 回归</span><span>部署完成后</span></div>
-          <div class="config-row"><span><code>improvement-agent</code></span><span>常驻横向监督，分析卡住日志并给出改进建议</span><span>每 2 小时汇报</span></div>
+          <div class="config-row">
+            <span>main 自己动手写代码</span>
+            <span>CODEBUDDY.md §1.1 禁用清单缺失，或 hooks 未拦截</span>
+            <span>补写 <code>pre-edit.sh</code>（见 A6）+ 刷新 CODEBUDDY.md 内容</span>
+          </div>
+          <div class="config-row">
+            <span>子 agent 已读不回</span>
+            <span>agent 模板缺 ACK 硬约束</span>
+            <span>给所有 agent 模板顶部加"唤醒后必须回 ACK"（见 A1）</span>
+          </div>
+          <div class="config-row">
+            <span>定时任务建不了</span>
+            <span>当前是 delegate 模式</span>
+            <span>先切回普通模式 → 创建 → 再切回 delegate（见 B1）</span>
+          </div>
+          <div class="config-row">
+            <span>遵从性下降 / 思考不执行</span>
+            <span>模型疲惫</span>
+            <span><code>/clear</code> + <code>/team-build @team.md</code>（见 C1）</span>
+          </div>
+          <div class="config-row">
+            <span>"Not in a team" 错误</span>
+            <span>工具态 team 上下文丢失</span>
+            <span>直接 <code>/team-build @team.md</code> 重建，inboxes 会保留</span>
+          </div>
+          <div class="config-row">
+            <span>某条 rule 反复被跳过</span>
+            <span>rules 约束力衰减</span>
+            <span>升级到 hooks 拦截；若涉底线再升到 CODEBUDDY.md（见 B 层失效升级）</span>
+          </div>
+          <div class="config-row">
+            <span>CNB PR 拿不到内网数据</span>
+            <span>skill endpoint 指向公网</span>
+            <span>让 AI 改：<em>"修改 cnb skills endpoint: api.cnb.cool → api.cnb.woa.com"</em></span>
+          </div>
+          <div class="config-row">
+            <span>AI 说"需要休息"</span>
+            <span>模型自我认知为"人类"</span>
+            <span>明确指令："<strong>不准休息，直到完全完成任务</strong>"</span>
+          </div>
+          <div class="config-row">
+            <span>同类问题反复出现</span>
+            <span>尚未沉淀为 proposal / skill</span>
+            <span>要求 improvement-agent 产出 <code>proposal-*.md</code>；≥3 次必升级</span>
+          </div>
         </div>
 
-        <div class="callout callout-tip" style="margin-top:20px;">
-          <strong>💡 关键设计：</strong>以 <strong>CNB Issue 为唯一事实来源</strong>——所有 Agent 的输入输出、状态扭转、上下文都通过 Issue 评论持久化。任何 Agent 重启或换人介入都能无损恢复；<code>main-agent</code> 只调度不实现，避免中心化瓶颈；<code>improvement-agent</code> 横向监督，让系统具备自我改进能力。
-        </div>
-
-        <div class="callout callout-warning" style="margin-top:16px;">
-          <strong>⚠️ 生产部署需人工批准</strong>：<code>deploy-agent</code> 对测试环境自动部署，但对生产环境强制走用户批准流程——AI 自动化的同时保留人对关键动作的最终决策权。
+        <div class="callout callout-tip" style="margin-top:18px;">
+          <strong>🎯 终极口诀：</strong><br>
+          <strong>能写规则就写规则，规则不灵就升 hooks，hooks 还漏就改 CODEBUDDY.md，流程固化就抽成 skill。</strong><br>
+          遇到反复问题 → 不靠"提醒"，靠"栅栏"——所有临时对话式纠偏都应在 1~2 次后沉淀为结构化产物（rules / hooks / skills / proposal）。
         </div>
       </div>
 
+      <!-- ===== 页面底部导航 ===== -->
       <div class="page-nav">
         <a href="fullstackdev.html" class="page-nav-btn prev">← 上一章：实战案例-全栈开发</a>
         <a href="resources.html" class="page-nav-btn next">下一章：更多阅读 →</a>
@@ -177,5 +2654,55 @@
 </main>
 
 <script src="../assets/script.js"></script>
+<script>
+(function(){
+  const toc = document.getElementById('tocFloat');
+  const toggle = document.getElementById('tocToggle');
+  const progressFill = document.getElementById('tocProgress');
+  if (!toc) return;
+
+  const links = toc.querySelectorAll('ol li a');
+  const sections = Array.from(links).map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+
+  // 折叠/展开
+  toggle && toggle.addEventListener('click', () => toc.classList.toggle('collapsed'));
+
+  // 点击平滑滚动
+  links.forEach(a => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', a.getAttribute('href'));
+      }
+    });
+  });
+
+  // 滚动时高亮当前章节 + 更新进度条
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      const scrollTop = window.pageYOffset;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0;
+      if (progressFill) progressFill.style.width = progress + '%';
+
+      // 当前可视区顶部 30% 位置落在哪个 section
+      const trigger = window.innerHeight * 0.3 + scrollTop;
+      let activeIdx = 0;
+      for (let i = 0; i < sections.length; i++) {
+        if (sections[i].offsetTop <= trigger) activeIdx = i;
+      }
+      links.forEach((a, i) => a.classList.toggle('active', i === activeIdx));
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+</script>
 </body>
 </html>
